@@ -14,7 +14,7 @@ export interface SetBoardState {
 export interface BoardConfig {
   x: number;
   y: number;
-  hills: string[];
+  hills?: string[];
 }
 
 const boardDimentions: { [k: string]: string[] } = {
@@ -35,7 +35,6 @@ export class Board {
   yAxis: string[];
 
   constructor({ x, y, hills }: BoardConfig) {
-    if (!hills.length) throw Error("'Hills' must have at least one member");
     checkBoardDimentions("x", x);
     checkBoardDimentions("y", y);
     let xAxis = boardDimentions.x.slice(0, x);

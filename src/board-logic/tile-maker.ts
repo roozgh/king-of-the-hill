@@ -136,7 +136,7 @@ const neighbourFinderMap: NeighbourFinderMap = new Map([
 interface TileMakerConfig {
   xAxis: string[];
   yAxis: string[];
-  hills: string[];
+  hills?: string[];
 }
 
 /**
@@ -157,7 +157,7 @@ export function makeBoardTilesFromAxis({
   xAxis.forEach((xValue, x) => {
     yAxis.forEach((yValue, y) => {
       let key = xValue + yValue;
-      let isHill = hills.includes(key);
+      let isHill = hills ? hills.includes(key) : false;
       let xEdge = getEdgeScore(xAxis.length, x);
       let yEdge = getEdgeScore(yAxis.length, y);
       let colour = getTileColour(x, y);

@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef, createContext, memo, useCallback } from "react";
-import { batch } from "react-redux";
+import { useState, useEffect, useRef, createContext, useCallback } from "react";
 import "../App.css";
 import Tile from "./tile";
 import { evaluatePosition, EvaluatorPlugin } from "../board-logic/ai/score-evaluator";
@@ -15,8 +14,6 @@ import {
   undoMove,
   windowResize,
 } from "./board-view-slice";
-
-const MemoTile = memo(Tile);
 
 const moveSound = new Audio("../move.mp3");
 moveSound.volume = 0.3;
@@ -79,17 +76,18 @@ export default function BoardView() {
   console.log("RENDER");
   const state = useAppSelector((state) => state.boardView);
   const dispatch = useAppDispatch();
+  // When board is animating CPU move
   const isBusy = useRef(false);
   const cpuTurnFlag = useRef(false);
   const { status, selectedTile, gameMode, boardConfig, boardState } = state;
-  const draging = useRef(false);
+  const [draging, updateDragging] = useState(false);
 
   useEffect(() => {
     if (cpuTurnFlag.current) {
       cpuTurnFlag.current = false;
       if (state.status === "ACTIVE") simulateComputerPlay();
     }
-  }, [cpuTurnFlag.current, state.status]);
+  }, [cpuTurnFlag.current, state.status, simulateComputerPlay]);
 
   /**
    * Initialise Board
@@ -105,80 +103,92 @@ export default function BoardView() {
   });
 
   /**
-   *
+   * For detecting mpose click and mouse ups outside Board
    */
   const onWindowMouseUp = useCallback(() => {
     console.log("Window Mouse Up");
-    if (state.selectedTile) {
-      if (draging.current) {
-        draging.current = false;
-      }
+    if (selectedTile) {
+      if (draging) updateDragging(false);
       dispatch(noPieceSelected());
     }
-  }, [dispatch, state.selectedTile]);
+  }, [dispatch, selectedTile, draging]);
 
   useWindowEvent("mouseup", onWindowMouseUp);
 
   /**
    *
    */
-  const onPieceMove = useCallback(
-    (toTile: string) => {
-      console.log("onPieceMove");
-      if (status !== "ACTIVE") return;
-      if (isBusy.current) return;
-      if (selectedTile) {
-        // If clicking on same tile again
-        if (selectedTile === toTile) {
-          draging.current = false;
-          return dispatch(noPieceSelected());
+  function onPieceMove(toTile: string) {
+    if (isBusy.current) return;
+    if (selectedTile) {
+      let board = new Board(boardConfig);
+      board.setState(boardState);
+      // Check if valid move
+      if (board.moveAllowed(selectedTile, toTile)) {
+        // Play compuer move
+        if (gameMode === "AGAINST_CPU") {
+          cpuTurnFlag.current = true;
         }
-        let board = new Board(boardConfig);
-        board.setState(boardState);
-        // Check if valid move
-        if (board.moveAllowed(selectedTile, toTile)) {
-          // Play compuer move
-          if (gameMode === "AGAINST_CPU") {
-            cpuTurnFlag.current = true;
-          }
-          moveSound.play();
-          dispatch(pieceMove(toTile));
-        } else {
-          draging.current = false;
-          return dispatch(noPieceSelected());
-        }
+        moveSound.play();
+        dispatch(pieceMove(toTile));
+      } else {
+        return dispatch(noPieceSelected());
       }
-      // If no piece was selected to move
-      else {
-        dispatch(pieceSelect(toTile));
-      }
-    },
-    [dispatch, status, selectedTile, boardConfig, boardState, gameMode]
-  );
+    }
+  }
 
   /**
    *
    */
-  const onPieceDrag = useCallback(
-    (tile: string, piece: any) => {
-      draging.current = true;
+  function onPieceDrag(tile: string) {
+    updateDragging(true);
+    if (selectedTile) {
+      // If draging a piece not already selected
+      if (tile !== selectedTile) {
+        dispatch(pieceSelect(tile));
+      }
+    } else {
       dispatch(pieceSelect(tile));
-    },
-    [dispatch]
-  );
+    }
+  }
 
   /**
    *
    */
-  const onPieceDrop = useCallback(
-    (toTile: string) => {
-      if (draging.current) {
+  function onPieceDrop(toTile: string) {
+    if (draging) {
+      updateDragging(false);
+      if (selectedTile) {
+        if (toTile === selectedTile) {
+          return dispatch(noPieceSelected());
+        }
         onPieceMove(toTile);
-        draging.current = false;
       }
-    },
-    [onPieceMove]
-  );
+    }
+  }
+
+  /**
+   *
+   */
+  function onTileClick(tile: string) {
+    if (selectedTile) {
+      onPieceMove(tile);
+    }
+  }
+
+  /**
+   *
+   */
+  function onPieceClick(tile: string) {
+    if (selectedTile) {
+      if (tile === selectedTile) {
+        dispatch(noPieceSelected());
+      }
+      onPieceMove(tile);
+    } else {
+      dispatch(pieceSelect(tile));
+    }
+  }
 
   /**
    *
@@ -263,7 +273,7 @@ export default function BoardView() {
       } = tileRow;
 
       return (
-        <MemoTile
+        <Tile
           key={key}
           colour={colour}
           width={state.tileWidth}
@@ -278,7 +288,8 @@ export default function BoardView() {
           isPrevMove={isPreviousMove}
           onPieceDrag={onPieceDrag}
           onPieceDrop={onPieceDrop}
-          onTileClick={onPieceMove}
+          onPieceClick={onPieceClick}
+          onTileClick={onTileClick}
         />
       );
     });
@@ -303,7 +314,7 @@ export default function BoardView() {
 
   const contextValue = {
     playerTurn: state.playerTurn,
-    draging: draging.current,
+    draging: draging,
     status: state.status,
     gameMode: state.gameMode,
     humanPlayer: state.humanPlayer,

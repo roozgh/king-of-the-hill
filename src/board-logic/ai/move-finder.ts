@@ -30,7 +30,6 @@ export function getMoveCandidates(
 
   console.timeEnd("Best Moves");
   console.log("Count: ", count);
-  console.log(moveTree);
 
   return moveTree[1] ? moveTree[1] : null;
 }

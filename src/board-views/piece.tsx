@@ -89,6 +89,7 @@ export function Piece({ name, colour, isHill, onPieceDrag, onPieceClick }: Piece
    *
    */
   useEffect(() => {
+    // When user drops piece outside Board
     if (!context.draging && mouseDown.current === false) {
       if (ref.current) {
         ref.current.style.transform = "none";
@@ -112,6 +113,7 @@ export function Piece({ name, colour, isHill, onPieceDrag, onPieceClick }: Piece
         x: e.clientX,
         y: e.clientY,
       };
+      // Trick to make mouse Events go through piece
       ref.current.style.pointerEvents = "none";
       ref.current.style.zIndex = "11";
       window.addEventListener("mousemove", onWindowMouseMove);

@@ -14,6 +14,7 @@ interface TileProps {
   onPieceDrag: any;
   edgeScore?: any;
   onPieceDrop: any;
+  onPieceClick: any;
   distanceFromPiece?: number | null;
   piece: { name: PieceName; colour: Colour } | null;
 }
@@ -33,6 +34,7 @@ export default function Tile(opt: TileProps) {
     distanceFromPiece,
     onPieceDrag,
     onPieceDrop,
+    onPieceClick,
   } = opt;
 
   /**
@@ -40,7 +42,7 @@ export default function Tile(opt: TileProps) {
    */
   function _onPieceClick(e: any) {
     e.stopPropagation();
-    onTileClick(tileKey);
+    onPieceClick(tileKey);
   }
 
   /**
@@ -56,6 +58,13 @@ export default function Tile(opt: TileProps) {
   function onMouseUp(e: any) {
     e.stopPropagation();
     onPieceDrop(tileKey);
+  }
+
+  /**
+   *
+   */
+  function onClick(e: any) {
+    onTileClick(tileKey);
   }
 
   let classes = ["tile"];
@@ -102,7 +111,7 @@ export default function Tile(opt: TileProps) {
   }
 
   return (
-    <div onMouseUp={onMouseUp} className={classes.join(" ")} style={tileStyle}>
+    <div onMouseUp={onMouseUp} onClick={onClick} className={classes.join(" ")} style={tileStyle}>
       <div className="tile-inner">
         {pieceElement}
         {highlightHtml}

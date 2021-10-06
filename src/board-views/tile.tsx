@@ -1,5 +1,3 @@
-import { useContext } from "react";
-import { BoardViewContext } from "./board-view";
 import { Piece } from "./piece";
 import { Colour, PieceName } from "../board-logic/piece";
 
@@ -37,16 +35,12 @@ export default function Tile(opt: TileProps) {
     onPieceDrop,
   } = opt;
 
-  let context = useContext(BoardViewContext);
-
   /**
    *
    */
   function _onPieceClick(e: any) {
     e.stopPropagation();
-    if (!context.draging) {
-      onTileClick(tileKey);
-    }
+    onTileClick(tileKey);
   }
 
   /**
@@ -61,9 +55,7 @@ export default function Tile(opt: TileProps) {
    */
   function onMouseUp(e: any) {
     e.stopPropagation();
-    if (context.draging) {
-      onPieceDrop(tileKey);
-    }
+    onPieceDrop(tileKey);
   }
 
   let classes = ["tile"];
@@ -84,7 +76,7 @@ export default function Tile(opt: TileProps) {
   if (isPossibleMove || isPrevMove) {
     let style: any = {};
     if (distanceFromPiece) {
-      style.animationDelay = (distanceFromPiece - 1) / 20 + "s";
+      style.animationDelay = (distanceFromPiece - 1) / 15 + "s";
     }
     highlightHtml = (
       <>

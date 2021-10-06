@@ -202,15 +202,6 @@ export const boardViewSlice = createSlice({
     /**
      *
      */
-    draggedPieceToggle(state, action: PayloadAction<string | null>) {
-      let board = makeNewBoard(state);
-      state.draggedPieceTile = action.payload;
-      state.tiles = formatTiles(board, []);
-    },
-
-    /**
-     *
-     */
     windowResize(state, action: PayloadAction<number>) {
       let windowWidth = action.payload;
       let boardColumnCount = state.boardConfig.x;
@@ -227,16 +218,8 @@ const simulateComputerPlay = createAsyncThunk('boardView/simulateComputerPlay', 
 })
 */
 
-export const {
-  init,
-  reset,
-  undoMove,
-  pieceSelect,
-  pieceMove,
-  noPieceSelected,
-  windowResize,
-  draggedPieceToggle,
-} = boardViewSlice.actions;
+export const { init, reset, undoMove, pieceSelect, pieceMove, noPieceSelected, windowResize } =
+  boardViewSlice.actions;
 
 /**
  *

@@ -62,9 +62,13 @@ export function Piece({ name, colour, isHill, onPieceDrag, onPieceClick }: Piece
   // If game is not over and not 'busy' e.g in midle of animation
   if (status === "ACTIVE") {
     if (gameMode === "AGAINST_CPU") {
-      if (humanPlayer === colour) canMovePiece = true;
+      if (humanPlayer === colour && playerTurn === colour) {
+        canMovePiece = true;
+      }
     } else if (gameMode === "AGAINST_HUMAN") {
-      if (playerTurn === colour) canMovePiece = true;
+      if (playerTurn === colour) {
+        canMovePiece = true;
+      }
     }
   }
 
@@ -100,9 +104,9 @@ export function Piece({ name, colour, isHill, onPieceDrag, onPieceClick }: Piece
    *
    */
   function onMouseMove(e: any) {
-    e.stopPropagation();
     if (!canMovePiece) return;
     if (mouseDown.current) {
+      e.stopPropagation();
       mouseDown.current = false;
       dragCoords.current = {
         x: e.clientX,
@@ -135,7 +139,6 @@ export function Piece({ name, colour, isHill, onPieceDrag, onPieceClick }: Piece
    *
    */
   function onMouseUp(e: any) {
-    e.stopPropagation();
     if (!canMovePiece) return;
     mouseDown.current = false;
   }

@@ -169,7 +169,7 @@
   border-right: none;
   border-bottom: none;
   animation: highlightCornerExpand;
-  animation-duration: 0.4s;
+  animation-duration: 0.7s;
   animation-fill-mode: forwards;
 }
 

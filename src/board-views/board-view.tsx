@@ -14,7 +14,6 @@ import {
   noPieceSelected,
   undoMove,
   windowResize,
-  draggedPieceToggle,
 } from "./board-view-slice";
 
 const MemoTile = memo(Tile);
@@ -49,7 +48,6 @@ const kingOutOfPosition: EvaluatorPlugin = (tile, piece) => {
 
 interface BoardViewContext {
   playerTurn: string;
-  isBusy: boolean;
   draging: boolean;
   status: string;
   gameMode: string;
@@ -58,7 +56,6 @@ interface BoardViewContext {
 
 export const BoardViewContext = createContext<BoardViewContext>({
   playerTurn: "WHITE",
-  isBusy: false,
   draging: false,
   status: "ACTIVE",
   gameMode: "AGAINST_CPU",
@@ -306,7 +303,6 @@ export default function BoardView() {
 
   const contextValue = {
     playerTurn: state.playerTurn,
-    isBusy: isBusy.current,
     draging: draging.current,
     status: state.status,
     gameMode: state.gameMode,

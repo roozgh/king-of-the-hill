@@ -1,38 +1,215 @@
-.App {
-  text-align: center;
+:root {
+  --border: solid 0px rgb(219, 219, 219);
+  --light-background: rgb(240, 233, 229);
+  --dark-background: rgb(221, 212, 203);
+  --blue: rgba(0, 212, 255, 1);
+  --red: rgba(255, 159, 80, 1);
+  --gray: rgb(241, 239, 235);
+  --gray2: rgb(207, 201, 188);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+#app {
+  background: var(--gray);
+  width: 100%;
+  height: 100vh;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.koth-board {
+  margin: 20px auto;
+  border: 10px solid var(--gray2);
+  border-image-slice: 1;
+  border-left: none;
+  border-right: none;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.koth-board.red-turn {
+  border-top-color: var(--red);
+}
+
+.koth-board.blue-turn {
+  border-bottom-color: var(--blue);
+}
+
+.koth-board-inner {
+}
+
+.koth-board-inner.drag .tile.possible-move .tile-inner {
+}
+
+.tile {
+  border-bottom: var(--border);
+  border-right: var(--border);
+  float: left;
+  background: rgb(241, 240, 238);
+  padding: 0px;
+  user-select: none;
+}
+
+.tile:first-child {
+  border-left: var(--border);
+}
+
+.row {
+  /* overflow: hidden; */
+}
+
+.row:first-child {
+  border-top: var(--border);
+}
+
+.tile-inner {
+  width: 100%;
+  height: 100%;
+  background: rgb(238, 238, 238);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  position: relative;
+  color: rgba(63, 61, 51, 0.2);
+  user-select: none;
+  /* transition: all 0.2s; */
 }
 
-.App-link {
-  color: #61dafb;
+.tile.dark .tile-inner {
+  background: var(--dark-background);
+}
+.tile.light .tile-inner {
+  background: var(--light-background);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.tile-inner .highlight {
+  content: "";
+  top: 4px;
+  left: 4px;
+  position: absolute;
+  z-index: 2;
+  opacity: 0;
+  /*border: dashed 3px rgba(173, 160, 149, 0.6);
+  transition: all 0.3s;*/
+}
+
+.tile-inner:hover {
+}
+
+.tile.prev-move .tile-inner .highlight-corner {
+  border-color: rgba(182, 170, 161);
+}
+
+.tile.possible-move.red-turn .tile-inner .highlight {
+  background: rgba(255, 196, 0, 0.08);
+  border-color: var(--red);
+  opacity: 1;
+}
+
+.tile.possible-move.blue-turn .tile-inner .highlight {
+  background: rgba(0, 183, 255, 0.08);
+  border-color: var(--blue);
+  opacity: 1;
+}
+
+.tile.red-turn.moving-piece .tile-inner {
+  background: rgba(255, 159, 80, 0.5) !important;
+}
+
+.tile.blue-turn.moving-piece .tile-inner {
+  background: rgba(80, 191, 255, 0.5) !important;
+}
+
+.tile.hill {
+}
+
+.tile.hill .tile-inner {
+  margin: 0px;
+  background: rgb(235, 217, 138) !important;
+}
+
+.piece {
+  width: 85%;
+  height: 85%;
+  user-select: none;
+  /*transition: all 0.1s ease-out;*/
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+}
+
+@media only screen and (max-width: 600px) {
+  .piece {
+    font-size: 1em;
   }
+}
+
+.piece.blue {
+  color: var(--blue);
+  border-color: var(--blue);
+}
+
+.piece.red {
+  color: var(--red);
+  border-color: var(--red);
+}
+
+.piece.gold {
+  color: yellow;
+  border-color: yellow;
+}
+
+/*
+  CSS and Animation for little corners around the Tile when Tile is highlighted
+*/
+
+.highlight-corner {
+  width: 8px;
+  height: 8px;
+  position: absolute;
+  opacity: 0;
+  z-index: 1;
+  border: solid 3px rgb(172, 168, 161);
+  border-right: none;
+  border-bottom: none;
+  animation: highlightCornerExpand;
+  animation-duration: 0.4s;
+  animation-fill-mode: forwards;
+}
+
+.koth-board.red-turn .highlight-corner {
+  border-color: var(--red);
+}
+
+.koth-board.blue-turn .highlight-corner {
+  border-color: var(--blue);
+}
+
+.highlight-top-right {
+  top: 4px;
+  right: 4px;
+  transform: rotate(90deg);
+}
+
+.highlight-top-left {
+  top: 4px;
+  left: 4px;
+}
+
+.highlight-bottom-left {
+  bottom: 4px;
+  left: 4px;
+  transform: rotate(-90deg);
+}
+
+.highlight-bottom-right {
+  bottom: 4px;
+  right: 4px;
+  transform: rotate(180deg);
+}
+
+@keyframes highlightCornerExpand {
+  from {
+    opacity: 0;
+  }
+
   to {
-    transform: rotate(360deg);
+    opacity: 1;
   }
 }

@@ -1,5 +1,6 @@
 import "../board.css";
-import { useEffect, useCallback, useReducer } from "react";
+import { Piece } from "./piece";
+import { useEffect, useCallback, useReducer, MouseEvent, memo } from "react";
 import { useWindowEvent } from "../utils";
 import Tile from "./tile";
 import { Board } from "../board-logic/board/board";
@@ -26,7 +27,7 @@ export default function BoardView(opt: BoardViewProps) {
   const { board, turn, playable, gameMode, boardMaxWidth, simulateMove, onPieceMove } = opt;
   const { totalTurns } = board.state;
   const [state, dispatch] = useReducer(boardViewReducer, boardViewInitialState);
-  const { selectedTile } = state;
+  const { selectedTile, draggedPiece, draggedPieceCoords } = state;
 
   /**
    * Initialise Board
@@ -72,13 +73,30 @@ export default function BoardView(opt: BoardViewProps) {
    * For detecting mouse click and mouse-ups outside Board
    */
   const onWindowMouseUp = useCallback(() => {
-    console.log("Window Mouse Up");
     if (selectedTile) {
       dispatch({ type: "NO_TILE_SELECTED" });
     }
   }, [selectedTile]);
 
   useWindowEvent("mouseup", onWindowMouseUp);
+
+  /**
+   * On Window mouse
+   * check if piece was dragged. Then re-render board with
+   * new dragged piece x, y coordinates equal to mouse x, y.
+   */
+  const onWindowMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (draggedPiece) {
+        const x = e.clientX;
+        const y = e.clientY;
+        dispatch({ type: "PIECE_DRAG_CONTINUE", x, y });
+      }
+    },
+    [draggedPiece]
+  );
+
+  useWindowEvent("mousemove", onWindowMouseMove);
 
   /**
    * Returns an Array of <div class="row"> Elements
@@ -125,6 +143,14 @@ export default function BoardView(opt: BoardViewProps) {
   });
   return (
     <BoardViewContext.Provider value={[state, dispatch]}>
+      {draggedPiece && draggedPieceCoords && (
+        <Piece
+          name={draggedPiece.name}
+          colour={draggedPiece.colour}
+          width={state.tileWidth - 20}
+          position={{ x: draggedPieceCoords.x, y: draggedPieceCoords.y }}
+        />
+      )}
       <div
         className={`koth-board ${board.state.player === "WHITE" ? "blue-turn" : "red-turn"}`}
         style={{ width: state.boardWidth, height: state.boardWidth }}

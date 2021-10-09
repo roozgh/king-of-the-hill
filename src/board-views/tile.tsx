@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, CSSProperties, MouseEvent } from "react";
 import { BoardViewContext } from "./board-view-reducer";
 import { Piece } from "./piece";
 import { Colour, PieceName } from "../board-logic/piece";
@@ -19,6 +19,7 @@ interface TileProps {
 }
 
 export default function Tile(opt: TileProps) {
+  //console.log("TILE RENDER");
   const {
     isHill,
     colour,
@@ -39,11 +40,11 @@ export default function Tile(opt: TileProps) {
   /**
    * For detecting piece drops on tile
    */
-  function onMouseUp(e: any) {
+  function onMouseUp(e: MouseEvent) {
     e.stopPropagation();
-    if (!state.draging) return;
+    if (!state.draggedPiece) return;
     if (!state.selectedTile) return;
-    if (!state.possibleMoves) throw Error("possibleMove Array not set");
+    if (!state.possibleMoves) throw Error("'possibleMove' Array not set");
     // Check if move is legal
     let moveIsLegal = state.possibleMoves.includes(tileKey);
     // If move not legal, clear board
@@ -52,7 +53,6 @@ export default function Tile(opt: TileProps) {
     }
     // Else make move
     else {
-      console.log("dropped");
       onPieceMove(state.selectedTile, tileKey);
     }
   }
@@ -60,7 +60,36 @@ export default function Tile(opt: TileProps) {
   /**
    *
    */
-  function onClick(e: any) {
+  function onPieceDrag() {
+    if (!piece) return;
+    const { name, colour } = piece;
+    dispatch({ type: "PIECE_DRAG", name, colour, tile: tileKey });
+  }
+
+  /**
+   *
+   */
+  function onPieceClick() {
+    if (!piece) return;
+    if (state.selectedTile) {
+      if (!state.possibleMoves) throw Error("'possibleMove' Array not set");
+      // Check if move is legal
+      let moveIsLegal = state.possibleMoves.includes(tileKey);
+      // If move not legal, clear board
+      if (!moveIsLegal) {
+        dispatch({ type: "NO_TILE_SELECTED" });
+      } else {
+        onPieceMove(state.selectedTile, tileKey);
+      }
+    } else {
+      dispatch({ type: "PIECE_CLICK", tile: tileKey });
+    }
+  }
+
+  /**
+   *
+   */
+  function onClick(e: MouseEvent) {
     e.stopPropagation();
     if (!playable || !state.selectedTile) return;
     if (!state.possibleMoves) throw Error("possibleMove Array not set");
@@ -92,9 +121,9 @@ export default function Tile(opt: TileProps) {
 
   let highlightHtml = null;
   if (isPossibleMove || isPrevMove) {
-    let style: any = {};
+    let style: CSSProperties = {};
     if (distanceFromPiece) {
-      style.animationDelay = (distanceFromPiece - 1) / 15 + "s";
+      style.animationDelay = (distanceFromPiece - 1) / 10 + "s";
     }
     highlightHtml = (
       <>
@@ -106,16 +135,21 @@ export default function Tile(opt: TileProps) {
     );
   }
 
+  let pieceWidth = width - 20;
+  if (state.selectedTile === tileKey) {
+    pieceWidth = width - 10;
+  }
+
   let pieceElement = null;
   if (piece) {
     pieceElement = (
       <Piece
         name={piece.name}
         colour={piece.colour}
-        tile={tileKey}
-        isHill={isHill}
         playable={playable}
-        onPieceMove={onPieceMove}
+        width={pieceWidth}
+        onPieceDrag={onPieceDrag}
+        onPieceClick={onPieceClick}
       />
     );
   }

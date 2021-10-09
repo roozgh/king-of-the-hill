@@ -27,6 +27,15 @@ export interface BoardViewState {
   boardWidth: number;
   gameMode: string;
   draging: boolean;
+  draggedPiece: null | {
+    colour: PieceColour;
+    name: PieceName;
+    tile: string;
+  };
+  draggedPieceCoords: null | {
+    x: number;
+    y: number;
+  };
 }
 
 export const boardViewInitialState: BoardViewState = {
@@ -38,6 +47,8 @@ export const boardViewInitialState: BoardViewState = {
   tileWidth: 90,
   boardWidth: 750,
   draging: false,
+  draggedPiece: null,
+  draggedPieceCoords: null,
 };
 
 export type BoardViewAction =
@@ -45,7 +56,9 @@ export type BoardViewAction =
   | { type: "NEW_TURN" }
   | { type: "BOARD_WIDTH_CHANGE"; boardWidth: number; tileWidth: number }
   | { type: "PIECE_CLICK"; tile: string }
-  | { type: "PIECE_DRAG"; tile: string }
+  | { type: "PIECE_DRAG"; tile: string; colour: PieceColour; name: PieceName }
+  | { type: "PIECE_DRAG_CONTINUE"; x: number; y: number }
+  | { type: "PIECE_DRAG_STOP" }
   | { type: "NO_TILE_SELECTED" };
 
 type TBoardViewContext = [BoardViewState, Dispatch<BoardViewAction>];
@@ -59,8 +72,8 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
   switch (action.type) {
     case "INIT": {
       console.log("INIT");
-      let { board, gameMode } = action;
-      let tiles = formatTiles(board);
+      const { board, gameMode } = action;
+      const tiles = formatTiles(board);
       return { ...boardViewInitialState, board, tiles, gameMode };
     }
 
@@ -69,40 +82,69 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
       const { board } = state;
       if (!board) throw Error("Board not set");
       const tiles = formatTiles(board, [], undefined);
-      return { ...state, tiles, selectedTile: null, draging: false };
+      return {
+        ...state,
+        tiles,
+        selectedTile: null,
+        draging: false,
+        draggedPiece: null,
+        draggedPieceCoords: null,
+      };
     }
 
     case "BOARD_WIDTH_CHANGE": {
       console.log("BOARD_WIDTH_CHANGE");
-      let { boardWidth, tileWidth } = action;
+      const { boardWidth, tileWidth } = action;
       return { ...state, boardWidth, tileWidth };
     }
 
     case "PIECE_DRAG": {
       console.log("PIECE_DRAG");
-      let { tile } = action;
+      const { tile, colour, name } = action;
       if (!state.board) throw Error("Board not set");
-      let possibleMovesWithDetails = getPossibleMovesWithDetails(tile, state.board);
-      let possibleMoves = possibleMovesWithDetails.map((m) => m.tileTo.key);
-      let tiles = formatTiles(state.board, possibleMovesWithDetails, tile);
-      return { ...state, tiles, possibleMoves, draging: true, selectedTile: tile };
+      const possibleMovesWithDetails = getPossibleMovesWithDetails(tile, state.board);
+      const possibleMoves = possibleMovesWithDetails.map((m) => m.tileTo.key);
+      const tiles = formatTiles(state.board, possibleMovesWithDetails, tile, undefined, tile);
+      const draggedPiece = { tile, colour, name };
+      return { ...state, tiles, possibleMoves, draggedPiece, draging: true, selectedTile: tile };
+    }
+
+    case "PIECE_DRAG_CONTINUE": {
+      console.log("PIECE_DRAG_CONTINUE");
+      const { x, y } = action;
+      return { ...state, draggedPieceCoords: { x, y } };
+    }
+
+    case "PIECE_DRAG_STOP": {
+      console.log("PIECE_DRAG_CONTINUE");
+      if (!state.board) throw Error("Board not set");
+      const tiles = formatTiles(state.board);
+      return { ...state, tiles, draggedPiece: null, draggedPieceCoords: null };
     }
 
     case "PIECE_CLICK": {
       console.log("ON_PIECE_CLICK");
-      let { tile } = action;
+      const { tile } = action;
       if (!state.board) throw Error("Board not set");
-      let possibleMovesWithDetails = getPossibleMovesWithDetails(tile, state.board);
-      let possibleMoves = possibleMovesWithDetails.map((m) => m.tileTo.key);
-      let tiles = formatTiles(state.board, possibleMovesWithDetails, tile);
+      const possibleMovesWithDetails = getPossibleMovesWithDetails(tile, state.board);
+      const possibleMoves = possibleMovesWithDetails.map((m) => m.tileTo.key);
+      const tiles = formatTiles(state.board, possibleMovesWithDetails, tile);
       return { ...state, tiles, possibleMoves, selectedTile: tile };
     }
 
     case "NO_TILE_SELECTED": {
       console.log("NO_TILE_SELECTED");
       if (!state.board) throw Error("Board not set");
-      let tiles = formatTiles(state.board);
-      return { ...state, tiles, possibleMoves: null, selectedTile: null, draging: false };
+      const tiles = formatTiles(state.board);
+      return {
+        ...state,
+        tiles,
+        possibleMoves: null,
+        selectedTile: null,
+        draggedPiece: null,
+        draggedPieceCoords: null,
+        draging: false,
+      };
     }
 
     default:
@@ -117,29 +159,35 @@ export function formatTiles(
   board: Board,
   possibleMove: PossibleMove[] = [],
   movingPiece?: string,
-  previousMove?: [string, string]
+  previousMove?: [string, string],
+  draggedPiece?: string
 ): FormatedTile[][] {
   return board.yAxis.map((y) => {
     return board.xAxis.map((x) => {
-      let key = x + y;
-      let tile = board.tiles.get(key);
+      const key = x + y;
+      const tile = board.tiles.get(key);
       if (!tile) throw Error("Invalid Tile " + key);
 
-      let possibleMoveTile = possibleMove.find((m) => m.tileTo.key === key);
-      let distanceFromPiece = possibleMoveTile ? possibleMoveTile.distanceFromPiece : null;
-      let isPossibleMove = possibleMoveTile ? true : false;
+      const possibleMoveTile = possibleMove.find((m) => m.tileTo.key === key);
+      const distanceFromPiece = possibleMoveTile ? possibleMoveTile.distanceFromPiece : null;
+      const isPossibleMove = possibleMoveTile ? true : false;
       let isMovingPiece = false;
       if (movingPiece && movingPiece === key) isMovingPiece = true;
 
-      let isPreviousMove = previousMove ? previousMove.includes(key) : false;
+      const isPreviousMove = previousMove ? previousMove.includes(key) : false;
 
-      let _piece = board.state.getPiece(tile.key);
+      const _piece = board.state.getPiece(tile.key);
       let piece = null;
       if (_piece) {
         piece = {
           name: _piece.name,
           colour: _piece.colour,
         };
+      }
+
+      // Do not render piece that is being dragged
+      if (draggedPiece && draggedPiece === key) {
+        piece = null;
       }
 
       return {

@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { Board, SetBoardState, BoardConfig } from "../board-logic/board/board";
-import { getPossibleMovesWithDetails, PossibleMove } from "../board-logic/possible-moves";
-import { Colour } from "../board-logic/piece";
-import { useAppSelector, useAppDispatch } from "../store/hooks";
-import { Colour as PieceColour, PieceName } from "../board-logic/piece";
+import { Board, SetBoardState, BoardConfig } from "./board-logic/board/board";
+import { getPossibleMovesWithDetails, PossibleMove } from "./board-logic/possible-moves";
+import { Colour } from "./board-logic/piece";
+import { useAppSelector, useAppDispatch } from "./store/hooks";
+import { Colour as PieceColour, PieceName } from "./board-logic/piece";
 
 interface Tile {
   key: string;

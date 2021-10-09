@@ -10,7 +10,7 @@ type Status = "ACTIVE" | "DRAW" | Colour;
  *
  */
 export class BoardState {
-  readonly totalTurns = 60;
+  readonly totalTurns = 80;
   private stateHistory: Map<number, State> = new Map();
   player: Colour = startingPlayer;
   turn = 1;

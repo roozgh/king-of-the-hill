@@ -1,5 +1,5 @@
 import { useContext, useRef, useEffect, useCallback } from "react";
-import { BoardViewContext } from "./board-view";
+import { BoardViewContext } from "./board-view-reducer";
 import { Colour, PieceName } from "../board-logic/piece";
 
 import whiteKing from "./images/white/king.png";
@@ -46,27 +46,30 @@ const pieceImages: PieceImages = {
 export interface PieceProps {
   name: PieceName;
   colour: Colour;
+  tile: string;
   isHill: boolean;
-  onPieceDrag: any;
-  onPieceClick: any;
+  playable: boolean;
+  onPieceMove: (from: string, to: string) => void;
 }
 
-export function Piece({ name, colour, isHill, onPieceDrag, onPieceClick }: PieceProps) {
-  let context = useContext(BoardViewContext);
-  let ref = useRef(null) as any;
-  let dragCoords: any = useRef({ x: 0, y: 0 });
-  let mouseDown = useRef(false);
-  const { gameMode, playerTurn, humanPlayer, status } = context;
+export function Piece({ name, colour, tile, isHill, playable, onPieceMove }: PieceProps) {
+  const [state, dispatch] = useContext(BoardViewContext);
+  if (!state.board) throw Error("Board not defined");
+  const { status, player } = state.board.state;
+  const { gameMode, draging } = state;
+  const ref = useRef(null) as any;
+  const dragCoords: any = useRef({ x: 0, y: 0 });
+  const mouseDown = useRef(false);
 
   let canMovePiece = false;
-  // If game is not over and not 'busy' e.g in midle of animation
-  if (status === "ACTIVE") {
+  // If game is not over
+  if (status === "ACTIVE" && playable) {
     if (gameMode === "AGAINST_CPU") {
-      if (humanPlayer === colour && playerTurn === colour) {
+      if (colour === "WHITE" && player === colour) {
         canMovePiece = true;
       }
     } else if (gameMode === "AGAINST_HUMAN") {
-      if (playerTurn === colour) {
+      if (player === colour) {
         canMovePiece = true;
       }
     }
@@ -90,7 +93,7 @@ export function Piece({ name, colour, isHill, onPieceDrag, onPieceClick }: Piece
    */
   useEffect(() => {
     // When user drops piece outside Board
-    if (!context.draging && mouseDown.current === false) {
+    if (!draging && mouseDown.current === false) {
       if (ref.current) {
         ref.current.style.transform = "none";
         ref.current.style.pointerEvents = "auto";
@@ -99,7 +102,7 @@ export function Piece({ name, colour, isHill, onPieceDrag, onPieceClick }: Piece
       mouseDown.current = false;
       window.removeEventListener("mousemove", onWindowMouseMove);
     }
-  }, [onWindowMouseMove, context.draging]);
+  }, [onWindowMouseMove, draging]);
 
   /**
    *
@@ -117,7 +120,7 @@ export function Piece({ name, colour, isHill, onPieceDrag, onPieceClick }: Piece
       ref.current.style.pointerEvents = "none";
       ref.current.style.zIndex = "11";
       window.addEventListener("mousemove", onWindowMouseMove);
-      onPieceDrag(e);
+      dispatch({ type: "PIECE_DRAG", tile });
     }
   }
 
@@ -151,7 +154,26 @@ export function Piece({ name, colour, isHill, onPieceDrag, onPieceClick }: Piece
   function onClick(e: any) {
     if (!canMovePiece) return;
     e.stopPropagation();
-    onPieceClick(e);
+    if (state.selectedTile) {
+      // If clicking on selected tile again
+      if (state.selectedTile === tile) {
+        dispatch({ type: "NO_TILE_SELECTED" });
+      } else {
+        if (!state.possibleMoves) throw Error("possibleMove Array not set");
+        // Check if move is legal
+        let moveIsLegal = state.possibleMoves.includes(tile);
+        // If move not legal, clear board
+        if (!moveIsLegal) {
+          dispatch({ type: "NO_TILE_SELECTED" });
+        } else {
+          onPieceMove(state.selectedTile, tile);
+        }
+      }
+    }
+    // If previsouly no tiles selected
+    else {
+      dispatch({ type: "PIECE_CLICK", tile });
+    }
   }
 
   let style: any = {};
@@ -159,7 +181,7 @@ export function Piece({ name, colour, isHill, onPieceDrag, onPieceClick }: Piece
 
   let image = pieceImages[colour][name];
   // If King Of The Hill
-  if (context.status === colour && name === "KING" && isHill) {
+  if (status === colour && name === "KING" && isHill) {
     image = goldenKing;
   }
 

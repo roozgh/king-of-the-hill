@@ -14,8 +14,14 @@
   height: 100vh;
 }
 
-.koth-board {
+.koth-board-con {
   margin: 20px auto;
+}
+
+.koth-board-header {
+}
+
+.koth-board {
   border: 10px solid var(--gray2);
   border-image-slice: 1;
   border-left: none;

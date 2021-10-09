@@ -49,10 +49,11 @@ export default function BoardView(opt: BoardViewProps) {
    */
   useEffect(() => {
     if (simulateMove) {
-      let [moveFrom, moveTo] = simulateMove;
-      dispatch({ type: "PIECE_CLICK", tile: moveFrom });
+      let [from, to] = simulateMove;
+      dispatch({ type: "PIECE_CLICK", tile: from });
       setTimeout(() => {
-        onPieceMove(moveFrom, moveTo);
+        dispatch({ type: "MOVE", from, to });
+        onPieceMove(from, to);
       }, 1500);
     }
   }, [simulateMove, onPieceMove]);

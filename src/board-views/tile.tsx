@@ -38,6 +38,14 @@ export default function Tile(opt: TileProps) {
   if (!state.board) throw Error("Board not defined");
 
   /**
+   *
+   */
+  function makeMove(from: string, to: string) {
+    dispatch({ type: "MOVE", from, to });
+    onPieceMove(from, to);
+  }
+
+  /**
    * For detecting piece drops on tile
    */
   function onMouseUp(e: MouseEvent) {
@@ -53,7 +61,7 @@ export default function Tile(opt: TileProps) {
     }
     // Else make move
     else {
-      onPieceMove(state.selectedTile, tileKey);
+      makeMove(state.selectedTile, tileKey);
     }
   }
 
@@ -79,7 +87,7 @@ export default function Tile(opt: TileProps) {
       if (!moveIsLegal) {
         dispatch({ type: "NO_TILE_SELECTED" });
       } else {
-        onPieceMove(state.selectedTile, tileKey);
+        makeMove(state.selectedTile, tileKey);
       }
     } else {
       dispatch({ type: "PIECE_CLICK", tile: tileKey });
@@ -101,12 +109,11 @@ export default function Tile(opt: TileProps) {
     }
     // Else make move
     else {
-      onPieceMove(state.selectedTile, tileKey);
+      makeMove(state.selectedTile, tileKey);
     }
   }
 
   let classes = ["tile"];
-  if (isPrevMove) classes.push("prev-move");
 
   if (state.board.state.player === "BLACK") classes.push("red-turn");
   else classes.push("blue-turn");
@@ -121,6 +128,9 @@ export default function Tile(opt: TileProps) {
 
   let highlightHtml = null;
   if (isPossibleMove || isPrevMove) {
+    // Only show 'previous move' when tile is no a 'possible move'
+    if (isPrevMove && !isPossibleMove) classes.push("prev-move");
+
     let style: CSSProperties = {};
     if (distanceFromPiece) {
       style.animationDelay = (distanceFromPiece - 1) / 10 + "s";

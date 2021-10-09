@@ -46,14 +46,14 @@ export interface PieceProps {
   name: PieceName;
   colour: Colour;
   width: number;
-  playable?: boolean;
+  movable?: boolean;
   position?: { x: number; y: number };
   onPieceDrag?: () => void;
   onPieceClick?: () => void;
 }
 
 export function Piece(opts: PieceProps) {
-  const { name, colour, playable, width, position, onPieceDrag, onPieceClick } = opts;
+  const { name, colour, movable, width, position, onPieceDrag, onPieceClick } = opts;
   const mouseDown = useRef(false);
   const pieceImage = pieceImages[colour][name];
 
@@ -69,7 +69,7 @@ export function Piece(opts: PieceProps) {
    */
   function onMouseDown(e: MouseEvent) {
     e.stopPropagation();
-    if (!playable) return;
+    if (!movable) return;
     mouseDown.current = true;
   }
 
@@ -77,7 +77,7 @@ export function Piece(opts: PieceProps) {
    *
    */
   function onMouseUp(e: MouseEvent) {
-    if (!playable) return;
+    if (!movable) return;
     mouseDown.current = false;
   }
 
@@ -96,13 +96,13 @@ export function Piece(opts: PieceProps) {
    */
   function onClick(e: MouseEvent) {
     if (!onPieceClick) return;
-    if (!playable) return;
+    if (!movable) return;
     e.stopPropagation();
     onPieceClick();
   }
 
   let style: CSSProperties = { width, height: width };
-  if (playable) style.cursor = "grab";
+  if (movable) style.cursor = "grab";
   // When piece is being dragged
   if (position) {
     style.position = "absolute";

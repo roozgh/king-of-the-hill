@@ -35,7 +35,8 @@ export default function Tile(opt: TileProps) {
   } = opt;
 
   const [state, dispatch] = useContext(BoardViewContext);
-  if (!state.board) throw Error("Board not defined");
+  const { board, draggedPiece, selectedTile, possibleMoves, gameMode } = state;
+  if (!board) throw Error("Board not defined");
 
   /**
    *
@@ -50,18 +51,18 @@ export default function Tile(opt: TileProps) {
    */
   function onMouseUp(e: MouseEvent) {
     e.stopPropagation();
-    if (!state.draggedPiece) return;
-    if (!state.selectedTile) return;
-    if (!state.possibleMoves) throw Error("'possibleMove' Array not set");
+    if (!draggedPiece) return;
+    if (!selectedTile) return;
+    if (!possibleMoves) throw Error("'possibleMove' Array not set");
     // Check if move is legal
-    let moveIsLegal = state.possibleMoves.includes(tileKey);
+    let moveIsLegal = possibleMoves.includes(tileKey);
     // If move not legal, clear board
     if (!moveIsLegal) {
       dispatch({ type: "NO_TILE_SELECTED" });
     }
     // Else make move
     else {
-      makeMove(state.selectedTile, tileKey);
+      makeMove(selectedTile, tileKey);
     }
   }
 
@@ -79,15 +80,15 @@ export default function Tile(opt: TileProps) {
    */
   function onPieceClick() {
     if (!piece) return;
-    if (state.selectedTile) {
-      if (!state.possibleMoves) throw Error("'possibleMove' Array not set");
+    if (selectedTile) {
+      if (!possibleMoves) throw Error("'possibleMove' Array not set");
       // Check if move is legal
-      let moveIsLegal = state.possibleMoves.includes(tileKey);
+      let moveIsLegal = possibleMoves.includes(tileKey);
       // If move not legal, clear board
       if (!moveIsLegal) {
         dispatch({ type: "NO_TILE_SELECTED" });
       } else {
-        makeMove(state.selectedTile, tileKey);
+        makeMove(selectedTile, tileKey);
       }
     } else {
       dispatch({ type: "PIECE_CLICK", tile: tileKey });
@@ -99,23 +100,26 @@ export default function Tile(opt: TileProps) {
    */
   function onClick(e: MouseEvent) {
     e.stopPropagation();
-    if (!playable || !state.selectedTile) return;
-    if (!state.possibleMoves) throw Error("possibleMove Array not set");
+    if (!playable || !selectedTile) return;
+    if (!possibleMoves) throw Error("possibleMove Array not set");
     // Check if move is legal
-    let moveIsLegal = state.possibleMoves.includes(tileKey);
+    let moveIsLegal = possibleMoves.includes(tileKey);
     // If move not legal, clear board
     if (!moveIsLegal) {
       dispatch({ type: "NO_TILE_SELECTED" });
     }
     // Else make move
     else {
-      makeMove(state.selectedTile, tileKey);
+      makeMove(selectedTile, tileKey);
     }
   }
 
+  /**
+   * STYLE & CLASSES
+   */
   let classes = ["tile"];
 
-  if (state.board.state.player === "BLACK") classes.push("red-turn");
+  if (board.state.player === "BLACK") classes.push("red-turn");
   else classes.push("blue-turn");
 
   if (isMovingPiece) classes.push("moving-piece");
@@ -133,7 +137,7 @@ export default function Tile(opt: TileProps) {
 
     let style: CSSProperties = {};
     if (distanceFromPiece) {
-      style.animationDelay = (distanceFromPiece - 1) / 10 + "s";
+      style.animationDelay = (distanceFromPiece - 1) / 20 + "s";
     }
     highlightHtml = (
       <>
@@ -145,18 +149,37 @@ export default function Tile(opt: TileProps) {
     );
   }
 
-  let pieceWidth = width - 20;
-  if (state.selectedTile === tileKey) {
-    pieceWidth = width - 10;
-  }
-
+  /**
+   * PIECE PROPS
+   */
   let pieceElement = null;
   if (piece) {
+    let pieceWidth = width - 20;
+    // If piece is selected, increase its size
+    if (selectedTile === tileKey) {
+      pieceWidth = width - 10;
+    }
+
+    let movable = false;
+    if (board.state.status === "ACTIVE" && playable) {
+      if (gameMode === "AGAINST_CPU") {
+        // Can only move WHITE pieces & can only do it on WHITE's turn
+        if (board.state.player === "WHITE" && piece.colour === "WHITE") {
+          movable = true;
+        }
+      } else if (gameMode === "AGAINST_HUMAN") {
+        // Can only move your pieces when your turn
+        if (board.state.player === piece.colour) {
+          movable = true;
+        }
+      }
+    }
+
     pieceElement = (
       <Piece
         name={piece.name}
         colour={piece.colour}
-        playable={playable}
+        movable={movable}
         width={pieceWidth}
         onPieceDrag={onPieceDrag}
         onPieceClick={onPieceClick}

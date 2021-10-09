@@ -74,14 +74,12 @@ export const BoardViewContext = createContext<TBoardViewContext>([boardViewIniti
 export function boardViewReducer(state: BoardViewState, action: BoardViewAction): BoardViewState {
   switch (action.type) {
     case "INIT": {
-      console.log("INIT");
       const { board, gameMode } = action;
       const tiles = formatTiles(board);
       return { ...boardViewInitialState, board, tiles, gameMode };
     }
 
     case "NEW_TURN": {
-      console.log("NEW_TURN");
       const { board } = state;
       if (!board) throw Error("Board not set");
       const tiles = formatTiles(board, state.previousMove);
@@ -96,13 +94,11 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
     }
 
     case "BOARD_WIDTH_CHANGE": {
-      console.log("BOARD_WIDTH_CHANGE");
       const { boardWidth, tileWidth } = action;
       return { ...state, boardWidth, tileWidth };
     }
 
     case "PIECE_DRAG": {
-      console.log("PIECE_DRAG");
       const { tile, colour, name } = action;
       if (!state.board) throw Error("Board not set");
       const possibleMovesWithDetails = getPossibleMovesWithDetails(tile, state.board);
@@ -119,27 +115,23 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
     }
 
     case "PIECE_DRAG_CONTINUE": {
-      console.log("PIECE_DRAG_CONTINUE");
       const { x, y } = action;
       return { ...state, draggedPieceCoords: { x, y } };
     }
 
     case "PIECE_DRAG_STOP": {
-      console.log("PIECE_DRAG_CONTINUE");
       if (!state.board) throw Error("Board not set");
       const tiles = formatTiles(state.board, state.previousMove);
       return { ...state, tiles, draggedPiece: null, draggedPieceCoords: null };
     }
 
     case "MOVE": {
-      console.log("MOVE");
       if (!state.board) throw Error("Board not set");
       const { from, to } = action;
       return { ...state, previousMove: [from, to] };
     }
 
     case "PIECE_CLICK": {
-      console.log("ON_PIECE_CLICK");
       const { tile } = action;
       if (!state.board) throw Error("Board not set");
       const possibleMovesWithDetails = getPossibleMovesWithDetails(tile, state.board);
@@ -149,7 +141,6 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
     }
 
     case "NO_TILE_SELECTED": {
-      console.log("NO_TILE_SELECTED");
       if (!state.board) throw Error("Board not set");
       const tiles = formatTiles(state.board, state.previousMove);
       return {
@@ -164,7 +155,7 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
     }
 
     default:
-      throw new Error();
+      throw new Error(`Invalid Action`);
   }
 }
 

@@ -4,13 +4,6 @@ import { getPossibleMoves } from "../possible-moves";
 import { makeBoardTilesFromAxis } from "../tile-maker";
 import { BoardState } from "./board-state";
 
-export interface SetBoardState {
-  turn: number;
-  state: {
-    [key: string]: [PieceName, Colour];
-  };
-}
-
 export interface BoardConfig {
   x: number;
   y: number;
@@ -53,33 +46,6 @@ export class Board {
   }
 
   /**
-   *
-   */
-  getState(): SetBoardState {
-    let stateArray = Array.from(this.state.getState());
-    let state: any = {};
-    stateArray.forEach(([key, piece]) => {
-      state[key] = [piece.name, piece.colour];
-    });
-    return { turn: this.state.turn, state };
-  }
-
-  /**
-   *
-   */
-  setState(config: SetBoardState) {
-    let state = new Map();
-    for (let key in config.state) {
-      let [pieceName, pieceColour] = config.state[key];
-      let tile = this.tiles.get(key);
-      if (!tile) throw Error("Invalid Tile Key: " + key);
-      let piece = makePiece(pieceName, pieceColour);
-      state.set(key, piece);
-    }
-    this.state.initState(state, config.turn);
-  }
-
-  /**
    * Move Piece. Check if game has winner.
    * If game has winner, return winning player colour.
    * If no winners, toggle player turn and return nothing.
@@ -102,12 +68,12 @@ export class Board {
     if (movingPiece.name === "MAGICIAN" && capturedPiece) {
       newState.set(to, movingPiece);
       newState.set(from, capturedPiece);
+      this.state.addState(newState);
     } else {
       newState.delete(from);
       newState.set(to, movingPiece);
+      this.state.addState(newState, capturedPiece);
     }
-
-    this.state.setState(newState);
 
     // Check if King has been captured
     if (capturedPiece?.name === "KING" && movingPiece.name !== "MAGICIAN") {

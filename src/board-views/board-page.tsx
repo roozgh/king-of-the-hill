@@ -1,9 +1,12 @@
 import { useState, useCallback, useEffect, memo, useRef } from "react";
-import { useWindowEvent } from "./utils";
-import BoardView from "./board-views/board-view";
-import { getMoveCandidates } from "./board-logic/ai/move-finder";
-import { Board, SetBoardState } from "./board-logic/board/board";
-import { EvaluatorPlugin } from "./board-logic/ai/score-evaluator";
+import { useWindowEvent } from "../utils";
+import BoardView from "./board-view";
+import BoardInfo from "./board-info";
+import CapturedPieces from "./captured-pieces";
+import { getMoveCandidates } from "../board-logic/ai/move-finder";
+import { Board } from "../board-logic/board/board";
+import { JSONBoardStates } from "../board-logic/board/board-state";
+import { EvaluatorPlugin } from "../board-logic/ai/score-evaluator";
 
 const BoardMemo = memo(BoardView);
 
@@ -30,37 +33,35 @@ const kingOutOfPosition: EvaluatorPlugin = (tile, piece) => {
 
 const scoreEvalPlugins = [archerOnDarkDarkTiles, kingOutOfPosition];
 
-const defaultBoardState: SetBoardState = {
-  turn: 1,
-  state: {
-    D1: ["KING", "WHITE"],
-    A1: ["CHARIOT", "WHITE"],
-    B1: ["ARCHER", "WHITE"],
-    F1: ["ARCHER", "WHITE"],
-    B2: ["SPY", "WHITE"],
-    D2: ["MAGICIAN", "WHITE"],
-    F2: ["TOWER", "WHITE"],
-    G1: ["CHARIOT", "WHITE"],
+const defaultBoardState: JSONBoardStates = [
+  [
+    ["D1", "WHITE", "KING"],
+    ["A1", "WHITE", "CHARIOT"],
+    ["B1", "WHITE", "ARCHER"],
+    ["F1", "WHITE", "ARCHER"],
+    ["B2", "WHITE", "SPY"],
+    ["D2", "WHITE", "MAGICIAN"],
+    ["F2", "WHITE", "TOWER"],
+    ["G1", "WHITE", "CHARIOT"],
 
-    D7: ["KING", "BLACK"],
-    A7: ["CHARIOT", "BLACK"],
-    B7: ["ARCHER", "BLACK"],
-    F7: ["ARCHER", "BLACK"],
-    B6: ["SPY", "BLACK"],
-    F6: ["TOWER", "BLACK"],
-    D6: ["MAGICIAN", "BLACK"],
-    G7: ["CHARIOT", "BLACK"],
-  },
-};
+    ["D7", "BLACK", "KING"],
+    ["A7", "BLACK", "CHARIOT"],
+    ["B7", "BLACK", "ARCHER"],
+    ["F7", "BLACK", "ARCHER"],
+    ["B6", "BLACK", "SPY"],
+    ["D6", "BLACK", "MAGICIAN"],
+    ["F6", "BLACK", "TOWER"],
+    ["G7", "BLACK", "CHARIOT"],
+  ],
+];
 
 const board = new Board({ x: 7, y: 7, hills: ["D4"] });
-board.setState(defaultBoardState);
+board.state.setStateFromJSON(defaultBoardState);
 
 /**
  *
  */
 export default function BoardPage() {
-  console.log("RENDER BoardPage");
   const [boardWidth, updateBoardWidth] = useState(boardMaxWidth);
   const [gameMode] = useState("AGAINST_CPU");
   const [moveToPlay, setMoveToPlay] = useState<null | [string, string]>(null);
@@ -103,7 +104,7 @@ export default function BoardPage() {
             return console.error("No move candidates found");
           }
           setMoveToPlay(moveCandidate);
-        }, 200);
+        }, 500);
       }
     },
     [gameMode]
@@ -111,10 +112,9 @@ export default function BoardPage() {
 
   return (
     <div className="koth-page">
-      <div className="koth-board-con">
-        <div className="koth-board-header">
-          Turn: {board.state.turn} / {board.state.totalTurns}
-        </div>
+      <CapturedPieces board={board} colour={"WHITE"} />
+      <CapturedPieces board={board} colour={"BLACK"} />
+      <BoardInfo board={board}>
         <BoardMemo
           board={board}
           turn={turn}
@@ -124,7 +124,7 @@ export default function BoardPage() {
           simulateMove={moveToPlay}
           onPieceMove={onPieceMove}
         />
-      </div>
+      </BoardInfo>
     </div>
   );
 }

@@ -73,6 +73,7 @@
   position: relative;
   color: rgba(63, 61, 51, 0.2);
   user-select: none;
+  transition: all 0.3s;
   /* transition: all 0.2s; */
 }
 
@@ -94,11 +95,8 @@
   transition: all 0.3s;*/
 }
 
-.tile-inner:hover {
-}
-
 .tile.prev-move .tile-inner .highlight-corner {
-  border-color: rgba(182, 170, 161);
+  border-color: rgba(153, 151, 136, 0.6);
 }
 
 .tile.possible-move.red-turn .tile-inner .highlight {
@@ -121,9 +119,6 @@
   background: rgba(80, 191, 255, 0.5) !important;
 }
 
-.tile.hill {
-}
-
 .tile.hill .tile-inner {
   margin: 0px;
   background: rgb(235, 217, 138) !important;
@@ -131,7 +126,6 @@
 
 .piece {
   user-select: none;
-  transition: all 0.1s ease-out;
 }
 
 @media only screen and (max-width: 600px) {
@@ -165,7 +159,7 @@
   position: absolute;
   opacity: 0;
   z-index: 1;
-  border: solid 3px rgb(172, 168, 161);
+  border: solid 3px rgb(216, 210, 200);
   border-right: none;
   border-bottom: none;
   animation: highlightCornerExpand;
@@ -182,25 +176,25 @@
 }
 
 .highlight-top-right {
-  top: 4px;
-  right: 4px;
+  top: 5px;
+  right: 5px;
   transform: rotate(90deg);
 }
 
 .highlight-top-left {
-  top: 4px;
-  left: 4px;
+  top: 5px;
+  left: 5px;
 }
 
 .highlight-bottom-left {
-  bottom: 4px;
-  left: 4px;
+  bottom: 5px;
+  left: 5px;
   transform: rotate(-90deg);
 }
 
 .highlight-bottom-right {
-  bottom: 4px;
-  right: 4px;
+  bottom: 5px;
+  right: 5px;
   transform: rotate(180deg);
 }
 

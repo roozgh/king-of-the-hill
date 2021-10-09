@@ -15,7 +15,7 @@ export function getMoveCandidates(
 ): [string, string] | null {
   count = 0;
   console.time("Best Moves");
-  let originalBoardState = board.getState();
+  let originalBoardJSONState = board.state.getJSONState();
 
   let boardCopyConfig = {
     x: board.yAxis.length,
@@ -24,12 +24,13 @@ export function getMoveCandidates(
   };
 
   let boardCopy = new Board(boardCopyConfig);
-  boardCopy.setState(originalBoardState);
+  boardCopy.state.setStateFromJSON(originalBoardJSONState);
 
   let moveTree = minimax(boardCopy, board.state.player, 0, true, -10000, 10000, plugins);
 
-  console.timeEnd("Best Moves");
-  console.log("Count: ", count);
+  //console.timeEnd("Best Moves");
+  //console.log("Count: ", count);
+  //console.log(moveTree[1]);
 
   return moveTree[1] ? moveTree[1] : null;
 }

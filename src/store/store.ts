@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { boardViewSlice } from "../board-view-slice";
+//import { boardViewSlice } from "../board-view-slice";
 
 export const store = configureStore({
   reducer: {
-    boardView: boardViewSlice.reducer,
+    // boardView: boardViewSlice.reducer,
   },
 });
 

@@ -28,7 +28,7 @@ export function storePosition(hash: string, score: number) {
  *
  */
 function makeHashFromBoard(board: Board) {
-  let tiles = Array.from(board.state.getState()).sort((a, b) => (a[0] < b[0] ? -1 : 1));
+  let tiles = Array.from(board.state.getActivePieces()).sort((a, b) => (a[0] < b[0] ? -1 : 1));
   let hash = tiles
     .map(([key, piece]) => {
       return key + piece.colour === "BLACK" ? "R" : "B" + piece.name;

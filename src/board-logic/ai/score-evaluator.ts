@@ -16,7 +16,7 @@ export function evaluatePosition(board: Board, plugins: EvaluatorPlugin[] = []):
   let bluePieces: [string, Piece][] = [];
   let redPieces: [string, Piece][] = [];
 
-  board.state.getState().forEach((piece, key) => {
+  board.state.getActivePieces().forEach((piece, key) => {
     if (piece.colour === "BLACK") redPieces.push([key, piece]);
     else bluePieces.push([key, piece]);
   });

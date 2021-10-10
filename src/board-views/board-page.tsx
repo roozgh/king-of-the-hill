@@ -5,7 +5,7 @@ import BoardInfo from "./board-info";
 import CapturedPieces from "./captured-pieces";
 import { getMoveCandidates } from "../board-logic/ai/move-finder";
 import { Board } from "../board-logic/board/board";
-import { JSONBoardStates } from "../board-logic/board/board-state";
+import { JSONBoardState } from "../board-logic/board/board-state";
 import { EvaluatorPlugin } from "../board-logic/ai/score-evaluator";
 
 const BoardMemo = memo(BoardView);
@@ -33,7 +33,7 @@ const kingOutOfPosition: EvaluatorPlugin = (tile, piece) => {
 
 const scoreEvalPlugins = [archerOnDarkDarkTiles, kingOutOfPosition];
 
-const defaultBoardState: JSONBoardStates = [
+const defaultBoardState: JSONBoardState = [
   [
     ["D1", "WHITE", "KING"],
     ["A1", "WHITE", "CHARIOT"],

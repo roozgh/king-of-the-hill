@@ -62,7 +62,7 @@ export class Board {
     let movingPiece = this.state.getPiece(from);
     if (movingPiece == null) throw Error("No Piece found");
 
-    let newState = new Map(this.state.getState());
+    let newState = new Map(this.state.getActivePieces());
 
     // Special Magician move
     if (movingPiece.name === "MAGICIAN" && capturedPiece) {
@@ -107,7 +107,7 @@ export class Board {
    * returns all possible moves by Colour
    */
   getAllPossibleMovesByColour(colour: Colour): string[] {
-    let stateArray = Array.from(this.state.getState());
+    let stateArray = Array.from(this.state.getActivePieces());
     return stateArray
       .filter(([key, piece]) => piece.colour === colour)
       .reduce((moves: string[], item) => {

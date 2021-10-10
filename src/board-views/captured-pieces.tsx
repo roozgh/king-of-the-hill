@@ -12,7 +12,7 @@ interface BoardInfoProps {
  */
 export default function CapturedPieces(props: BoardInfoProps) {
   const { board, colour } = props;
-  const capturedPieces = board.state.getCompleteState().capturedPieces;
+  const capturedPieces = board.state.getCapturedPieces();
   const pieces = capturedPieces
     .filter((piece) => colour === piece.colour)
     .map((piece) => <Piece name={piece.name} colour={colour} width={50} />);

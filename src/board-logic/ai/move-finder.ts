@@ -105,7 +105,7 @@ function minimax(
 function getMoves(board: Board): PossibleMove[] {
   let moves: PossibleMove[] = [];
   let player = board.state.player;
-  let stateArray = Array.from(board.state.getState());
+  let stateArray = Array.from(board.state.getActivePieces());
   let pieces = stateArray.filter(([key, piece]) => piece.colour === player);
 
   for (let [key] of pieces) {

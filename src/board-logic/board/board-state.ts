@@ -2,75 +2,69 @@ import { Piece, Colour, PieceName, makePiece } from "../piece";
 
 const startingPlayer = "WHITE";
 
-type State = Map<string, Piece>;
+type ActivePieces = Map<string, Piece>;
 
-interface CompleteState {
-  state: State;
+interface State {
+  activePieces: ActivePieces;
   capturedPieces: Piece[];
 }
 
-type Status = "ACTIVE" | "DRAW" | Colour;
-
 type JSONBoardStateTileKey = string | null;
 type JSONBoardStateItem = [JSONBoardStateTileKey, Colour, PieceName];
-type JSONBoardState = JSONBoardStateItem[];
-export type JSONBoardStates = JSONBoardState[];
+type JSONBoardStateSingle = JSONBoardStateItem[];
+export type JSONBoardState = JSONBoardStateSingle[];
+
+type Status = "ACTIVE" | "DRAW" | Colour;
 
 /**
  *
  */
 export class BoardState {
   readonly totalTurns = 80;
-  private stateHistory: CompleteState[] = [];
+  private stateHistory: State[] = [];
   player: Colour = startingPlayer;
   turn = 1;
   status: Status = "ACTIVE";
 
   /**
-   *
+   * Takes a Tile key and returns its piece in current position
    */
   getPiece(key: string) {
-    let completeState = this.stateHistory[this.turn - 1];
-    if (!completeState) throw new Error(`Invalid State for Turn: ${this.turn}`);
-    let piece = completeState.state.get(key);
+    const state = this.stateHistory[this.turn - 1];
+    if (!state) throw new Error(`Invalid State for Turn: ${this.turn}`);
+    const piece = state.activePieces.get(key);
     return piece;
   }
 
   /**
-   *  Includes both captured & uncaptured pieces
+   * Returns active pieces in current position.
+   * Return value is a Javascript Map where
+   * key is Tile key and value is a Piece Object
    */
-  getCompleteState(): CompleteState {
-    let completeState = this.stateHistory[this.turn - 1];
-    if (!completeState) throw new Error(`Invalid State for Turn: ${this.turn}`);
-    return completeState;
+  getActivePieces(): ActivePieces {
+    const state = this.stateHistory[this.turn - 1];
+    if (!state) throw new Error(`Invalid State for Turn: ${this.turn}`);
+    return state.activePieces;
   }
 
   /**
-   * Only Includes uncaptured pieces and their Tile key
+   * Returns an of captured pieces in current position
    */
-  getState(): State {
-    let completeState = this.stateHistory[this.turn - 1];
-    if (!completeState) throw new Error(`Invalid State for Turn: ${this.turn}`);
-    return completeState.state;
-  }
-
-  /**
-   *
-   */
-  initState(newState: CompleteState, turn = 1) {
-    this.stateHistory = [newState];
-    this.turn = turn;
-    this.player = this.getPlayerColourFromTurn();
+  getCapturedPieces(): Piece[] {
+    const state = this.stateHistory[this.turn - 1];
+    if (!state) throw new Error(`Invalid State for Turn: ${this.turn}`);
+    return state.capturedPieces;
   }
 
   /**
    *
    */
-  addState(newState: State, capturedPiece?: Piece) {
-    const completeState = this.getCompleteState();
-    let capturedPieces = completeState.capturedPieces.slice();
+  addState(newState: ActivePieces, capturedPiece?: Piece) {
+    const state = this.stateHistory[this.turn - 1];
+    if (!state) throw new Error(`Invalid State for Turn: ${this.turn}`);
+    const capturedPieces = state.capturedPieces.slice();
     if (capturedPiece) capturedPieces.push(capturedPiece);
-    this.stateHistory.push({ capturedPieces, state: newState });
+    this.stateHistory.push({ capturedPieces, activePieces: newState });
     this.turn++;
   }
 
@@ -96,6 +90,13 @@ export class BoardState {
   /**
    *
    */
+  getNextTurnPlayer(): Colour {
+    return this.player === "BLACK" ? "WHITE" : "BLACK";
+  }
+
+  /**
+   *
+   */
   reset() {
     this.turn = 0;
     this.stateHistory = [];
@@ -104,28 +105,21 @@ export class BoardState {
   }
 
   /**
-   *
+   * Returns JSON representation of board state
    */
-  getNextTurnPlayer(): Colour {
-    return this.player === "BLACK" ? "WHITE" : "BLACK";
-  }
+  getJSONState(): JSONBoardState {
+    let boardStateJSON: JSONBoardState = [];
 
-  /**
-   *
-   */
-  getJSONState(): JSONBoardStates {
-    let boardStateJSON: JSONBoardStates = [];
-
-    this.stateHistory.forEach((completeState) => {
-      const capturedPieces = completeState.capturedPieces.map((piece) => {
+    this.stateHistory.forEach((state) => {
+      const capturedPieces = state.capturedPieces.map((piece) => {
         const stateItem: JSONBoardStateItem = [null, piece.colour, piece.name];
         return stateItem;
       });
-      const notCapturedPieces = Array.from(completeState.state).map(([key, piece]) => {
+      const activePieces = Array.from(state.activePieces).map(([key, piece]) => {
         const stateItem: JSONBoardStateItem = [key, piece.colour, piece.name];
         return stateItem;
       });
-      const combinedStates = [...notCapturedPieces, ...capturedPieces];
+      const combinedStates = [...activePieces, ...capturedPieces];
       boardStateJSON.push(combinedStates);
     });
 
@@ -133,34 +127,34 @@ export class BoardState {
   }
 
   /**
-   *
+   * Sets board state from JSON
    */
-  setStateFromJSON(stateJSON: JSONBoardStates) {
-    let completeState: CompleteState[] = [];
+  setStateFromJSON(stateJSON: JSONBoardState) {
+    let state: State[] = [];
     let turn = 0;
 
-    stateJSON.forEach((state) => {
-      turn++;
-      const capturedPieces = state
+    stateJSON.forEach((stateJSONItem) => {
+      const capturedPieces = stateJSONItem
         .filter(([key]) => key === null)
         .map(([key, colour, name]) => {
           let piece = makePiece(name, colour);
           return piece;
         });
 
-      let stateMap = new Map();
+      let activePieces = new Map();
 
-      state
+      stateJSONItem
         .filter(([key]) => key !== null)
         .forEach(([key, colour, name]) => {
           let piece = makePiece(name, colour);
-          stateMap.set(key, piece);
+          activePieces.set(key, piece);
         });
 
-      completeState.push({ capturedPieces, state: stateMap });
+      state.push({ capturedPieces, activePieces });
+      turn++;
     });
 
-    this.stateHistory = completeState;
+    this.stateHistory = state;
     this.turn = turn;
     this.player = this.getPlayerColourFromTurn();
   }

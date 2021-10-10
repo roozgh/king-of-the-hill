@@ -103,13 +103,7 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
       if (!state.board) throw Error("Board not set");
       const possibleMovesWithDetails = getPossibleMovesWithDetails(tile, state.board);
       const possibleMoves = possibleMovesWithDetails.map((m) => m.tileTo.key);
-      const tiles = formatTiles(
-        state.board,
-        state.previousMove,
-        possibleMovesWithDetails,
-        tile,
-        tile
-      );
+      const tiles = formatTiles(state.board, null, possibleMovesWithDetails, tile, tile);
       const draggedPiece = { tile, colour, name };
       return { ...state, tiles, possibleMoves, draggedPiece, draging: true, selectedTile: tile };
     }
@@ -136,7 +130,7 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
       if (!state.board) throw Error("Board not set");
       const possibleMovesWithDetails = getPossibleMovesWithDetails(tile, state.board);
       const possibleMoves = possibleMovesWithDetails.map((m) => m.tileTo.key);
-      const tiles = formatTiles(state.board, state.previousMove, possibleMovesWithDetails, tile);
+      const tiles = formatTiles(state.board, null, possibleMovesWithDetails, tile);
       return { ...state, tiles, possibleMoves, selectedTile: tile };
     }
 

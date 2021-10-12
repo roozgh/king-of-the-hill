@@ -6,7 +6,6 @@ import { Colour, PieceName } from "../board-logic/piece";
 interface TileProps {
   tileKey: string;
   colour: string;
-  width: number;
   isHill: boolean;
   isPossibleMove: boolean;
   isMovingPiece: boolean;
@@ -23,7 +22,6 @@ export default function Tile(opt: TileProps) {
   const {
     isHill,
     colour,
-    width,
     isPossibleMove,
     isMovingPiece,
     piece,
@@ -35,7 +33,7 @@ export default function Tile(opt: TileProps) {
   } = opt;
 
   const [state, dispatch] = useContext(BoardViewContext);
-  const { board, draggedPiece, selectedTile, possibleMoves, gameMode } = state;
+  const { board, draggedPiece, selectedTile, possibleMoves, gameMode, tileWidth } = state;
   if (!board) throw Error("Board not defined");
 
   /**
@@ -128,7 +126,7 @@ export default function Tile(opt: TileProps) {
   if (colour === "DARK") classes.push("dark");
   else classes.push("light");
 
-  let tileStyle = { width, height: width };
+  let tileStyle = { width: tileWidth, height: tileWidth };
 
   let highlightHtml = null;
   if (isPossibleMove || isPrevMove) {
@@ -154,10 +152,11 @@ export default function Tile(opt: TileProps) {
    */
   let pieceElement = null;
   if (piece) {
-    let pieceWidth = width - 20;
+    // Piece size always 85% of Tile size
+    let pieceWidth = Math.floor((tileWidth * 85) / 100);
     // If piece is selected, increase its size
     if (selectedTile === tileKey) {
-      pieceWidth = width - 10;
+      pieceWidth += 5;
     }
 
     let movable = false;

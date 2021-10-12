@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect, memo, useRef } from "react";
 import { useWindowEvent } from "../utils";
 import BoardView from "./board-view";
 import BoardInfo from "./board-info";
-import CapturedPieces from "./captured-pieces";
 import { getMoveCandidates } from "../board-logic/ai/move-finder";
 import { Board } from "../board-logic/board/board";
 import { JSONBoardState } from "../board-logic/board/board-state";
@@ -10,7 +9,7 @@ import { EvaluatorPlugin } from "../board-logic/ai/score-evaluator";
 
 const BoardMemo = memo(BoardView);
 
-const boardMaxWidth = 750;
+const boardMaxWidth = 900;
 
 const archerOnDarkDarkTiles: EvaluatorPlugin = (tile, piece) => {
   if (piece.name === "ARCHER" && tile.colour === "DARK") return 10;
@@ -62,32 +61,50 @@ board.state.setStateFromJSON(defaultBoardState);
  *
  */
 export default function BoardPage() {
-  const [boardWidth, updateBoardWidth] = useState(boardMaxWidth);
+  const [screenSize, updateScreenSize] = useState<"sm" | "lg">("sm");
+  const [boardWidth, updateBoardWidth] = useState(0);
+  const [boardInfoSize, updateBoardInfoSize] = useState<{ w: number; h: number }>({ w: 0, h: 0 });
   const [gameMode] = useState("AGAINST_CPU");
   const [moveToPlay, setMoveToPlay] = useState<null | [string, string]>(null);
+  const moveToPlayTimeoutId = useRef(0);
   const [playable, updatePlayable] = useState(true);
   // Why have a seperate 'turn' variable when board.state.turn exists?
   // To force react to re-render board-view after board.move()
   const [turn, setTurn] = useState(1);
 
   /**
-   * On Window resize
+   *
    */
-  useWindowEvent("resize", () => {
-    let newWidth = boardMaxWidth;
-    if (window.innerWidth < boardMaxWidth) {
-      newWidth = window.innerWidth;
-    } else {
-      Math.min(window.innerWidth, boardMaxWidth);
+  const adjustBoardSize = useCallback(() => {
+    // Don't go bigger than max width
+    let newBoardWidth = Math.min(window.innerWidth, boardMaxWidth);
+    let screenSize: "sm" | "lg" = "sm";
+    let boardInfoSize = { w: newBoardWidth, h: 200 };
+
+    if (newBoardWidth > 660) {
+      screenSize = "lg";
+      newBoardWidth -= 160;
+      boardInfoSize = { w: 120, h: newBoardWidth + 20 };
     }
-    updateBoardWidth(newWidth);
-  });
+    updateScreenSize(screenSize);
+    updateBoardWidth(newBoardWidth);
+    updateBoardInfoSize(boardInfoSize);
+  }, []);
+
+  // On initial render
+  useEffect(adjustBoardSize, [adjustBoardSize]);
+  // On Window resize
+  useWindowEvent("resize", adjustBoardSize);
 
   /**
    * Called when player makes a new move
    */
   const onPieceMove = useCallback(
     (from: string, to: string) => {
+      if (!board.isValidMove(from, to)) {
+        console.error(`Invalid move: [${from}, ${to}]`);
+        return;
+      }
       board.move(from, to);
       setTurn(board.state.turn);
       if (board.state.status !== "ACTIVE") return;
@@ -98,33 +115,56 @@ export default function BoardPage() {
       } else {
         updatePlayable(false);
         // Simulate computer play
-        setTimeout(() => {
+        moveToPlayTimeoutId.current = window.setTimeout(() => {
+          if (!board) return;
           const moveCandidate = getMoveCandidates(board, scoreEvalPlugins);
           if (moveCandidate === null) {
             return console.error("No move candidates found");
           }
           setMoveToPlay(moveCandidate);
+          moveToPlayTimeoutId.current = 0;
         }, 500);
       }
     },
     [gameMode]
   );
 
+  /**
+   *
+   */
+  function onRestart() {
+    if (board.state.turn > 1) {
+      // Clear move simulation timeout if it exists
+      if (moveToPlayTimeoutId.current) {
+        clearTimeout(moveToPlayTimeoutId.current);
+      }
+      board.state.reset();
+      setTurn(1);
+      updatePlayable(true);
+    }
+  }
+
   return (
     <div className="koth-page">
-      <CapturedPieces board={board} colour={"WHITE"} />
-      <CapturedPieces board={board} colour={"BLACK"} />
-      <BoardInfo board={board}>
-        <BoardMemo
+      <div className={`koth-board-wrapper ${screenSize}`}>
+        <div className={`koth-board ${board.state.player === "WHITE" ? "blue-turn" : "red-turn"}`}>
+          <BoardMemo
+            board={board}
+            turn={turn}
+            gameMode={gameMode}
+            playable={playable}
+            boardMaxWidth={boardWidth}
+            simulateMove={moveToPlay}
+            onPieceMove={onPieceMove}
+          />
+        </div>
+        <BoardInfo
           board={board}
-          turn={turn}
-          gameMode={gameMode}
-          playable={playable}
-          boardMaxWidth={boardWidth}
-          simulateMove={moveToPlay}
-          onPieceMove={onPieceMove}
+          restart={onRestart}
+          height={boardInfoSize.h}
+          width={boardInfoSize.w}
         />
-      </BoardInfo>
+      </div>
     </div>
   );
 }

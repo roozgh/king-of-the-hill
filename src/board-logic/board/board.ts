@@ -98,9 +98,16 @@ export class Board {
   /**
    *
    */
-  moveAllowed(fromKey: string, toKey: string): boolean {
-    let possibleMoves = getPossibleMoves(fromKey, this);
-    return possibleMoves.includes(toKey);
+  isValidMove(from: string, to: string): boolean {
+    try {
+      let piece = this.state.getPiece(from);
+      if (!piece) return false;
+      if (piece.colour !== this.state.player) return false;
+      let possibleMoves = getPossibleMoves(from, this);
+      return possibleMoves.includes(to);
+    } catch (e) {
+      return false;
+    }
   }
 
   /**

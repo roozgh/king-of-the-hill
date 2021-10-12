@@ -9,16 +9,43 @@
 }
 
 #app {
+}
+
+.koth-page {
   background: var(--gray);
   width: 100%;
   height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /*align-items: center;*/
 }
 
-.koth-board-con {
-  margin: 20px auto;
+.koth-board-wrapper.sm .koth-board-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
-.koth-board-header {
+.koth-board-wrapper.lg .koth-board {
+  float: left;
+}
+
+.koth-board-wrapper.lg .koth-board-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-between;
+  padding-left: 20px;
+}
+
+.koth-board-wrapper.lg .koth-board-info .koth-captured-pieces {
+  height: 200px;
+  width: 120px;
+  border-radius: 5px;
+  /*border: dashed 3px var(--gray2);
+  background: rgba(221, 218, 214, 0.26);*/
+}
+.koth-captured-pieces .piece {
+  margin: 5px;
 }
 
 .koth-board {
@@ -36,12 +63,6 @@
   border-bottom-color: var(--blue);
 }
 
-.koth-board-inner {
-}
-
-.koth-board-inner.drag .tile.possible-move .tile-inner {
-}
-
 .tile {
   border-bottom: var(--border);
   border-right: var(--border);
@@ -49,18 +70,6 @@
   background: rgb(241, 240, 238);
   padding: 0px;
   user-select: none;
-}
-
-.tile:first-child {
-  border-left: var(--border);
-}
-
-.row {
-  /* overflow: hidden; */
-}
-
-.row:first-child {
-  border-top: var(--border);
 }
 
 .tile-inner {
@@ -154,6 +163,7 @@
 */
 
 .highlight-corner {
+  --corner-margin: 4px;
   width: 8px;
   height: 8px;
   position: absolute;
@@ -167,6 +177,13 @@
   animation-fill-mode: forwards;
 }
 
+.koth-board-wrapper.sm .highlight-corner {
+  --corner-margin: 3px;
+  border-width: 2px;
+  width: 6px;
+  height: 6px;
+}
+
 .koth-board.red-turn .highlight-corner {
   border-color: var(--red);
 }
@@ -176,25 +193,25 @@
 }
 
 .highlight-top-right {
-  top: 5px;
-  right: 5px;
+  top: var(--corner-margin);
+  right: var(--corner-margin);
   transform: rotate(90deg);
 }
 
 .highlight-top-left {
-  top: 5px;
-  left: 5px;
+  top: var(--corner-margin);
+  left: var(--corner-margin);
 }
 
 .highlight-bottom-left {
-  bottom: 5px;
-  left: 5px;
+  bottom: var(--corner-margin);
+  left: var(--corner-margin);
   transform: rotate(-90deg);
 }
 
 .highlight-bottom-right {
-  bottom: 5px;
-  right: 5px;
+  bottom: var(--corner-margin);
+  right: var(--corner-margin);
   transform: rotate(180deg);
 }
 

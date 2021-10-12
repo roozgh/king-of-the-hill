@@ -23,8 +23,9 @@ export class BoardState {
   readonly totalTurns = 80;
   private stateHistory: State[] = [];
   player: Colour = startingPlayer;
-  turn = 1;
   status: Status = "ACTIVE";
+  turn = 1;
+  seed = Math.random() * 1000000;
 
   /**
    * Takes a Tile key and returns its piece in current position
@@ -98,10 +99,11 @@ export class BoardState {
    *
    */
   reset() {
-    this.turn = 0;
-    this.stateHistory = [];
+    this.turn = 1;
+    this.stateHistory = this.stateHistory.slice(0, 1);
     this.status = "ACTIVE";
     this.player = startingPlayer;
+    this.seed = Math.random() * 1000000;
   }
 
   /**

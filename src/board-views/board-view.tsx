@@ -41,21 +41,33 @@ export default function BoardView(opt: BoardViewProps) {
    */
   useEffect(() => {
     dispatch({ type: "NEW_TURN" });
-    moveSound.play();
+    if (turn !== 1) {
+      moveSound.play();
+    }
   }, [turn]);
 
   /**
    * simulate CPU move
    */
   useEffect(() => {
+    let timeoutId = 0;
     if (simulateMove) {
       let [from, to] = simulateMove;
       dispatch({ type: "PIECE_CLICK", tile: from });
-      setTimeout(() => {
+      const seed = board.state.seed;
+      timeoutId = window.setTimeout(() => {
+        // Make sure there's no turn mis-match.
+        // e.g User pressing the 'Restart' button
+        // while move animation is hapening
+        if (board.state.seed !== seed) return;
         dispatch({ type: "MOVE", from, to });
         onPieceMove(from, to);
       }, 1500);
     }
+
+    return () => {
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
   }, [simulateMove, onPieceMove]);
 
   /**
@@ -121,7 +133,6 @@ export default function BoardView(opt: BoardViewProps) {
         <Tile
           key={key}
           colour={colour}
-          width={state.tileWidth}
           tileKey={key}
           isHill={isHill}
           isPossibleMove={isPossibleMove}
@@ -153,10 +164,10 @@ export default function BoardView(opt: BoardViewProps) {
         />
       )}
       <div
-        className={`koth-board ${board.state.player === "WHITE" ? "blue-turn" : "red-turn"}`}
+        className={`board-inner ${selectedTile ? "drag" : ""}`}
         style={{ width: state.boardWidth, height: state.boardWidth }}
       >
-        <div className={`board-inner ${selectedTile ? "drag" : ""}`}>{boardRowsHtml}</div>
+        {boardRowsHtml}
       </div>
     </BoardViewContext.Provider>
   );

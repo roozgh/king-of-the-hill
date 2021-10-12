@@ -80,12 +80,19 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
     }
 
     case "NEW_TURN": {
-      const { board } = state;
+      const { board, previousMove } = state;
       if (!board) throw Error("Board not set");
-      const tiles = formatTiles(board, state.previousMove);
+      let newPreviousMove: null | [string, string] = null;
+      if (board.state.turn === 1) {
+        newPreviousMove = null;
+      } else {
+        newPreviousMove = previousMove ? previousMove : null;
+      }
+      const tiles = formatTiles(board, newPreviousMove);
       return {
         ...state,
         tiles,
+        previousMove: newPreviousMove,
         selectedTile: null,
         draging: false,
         draggedPiece: null,

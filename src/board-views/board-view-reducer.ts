@@ -4,6 +4,7 @@ import { Colour as PieceColour, PieceName } from "../board-logic/piece";
 import { getPossibleMovesWithDetails, PossibleMove } from "../board-logic/possible-moves";
 
 interface FormatedTile {
+  playerTurn: PieceColour;
   key: string;
   colour: string;
   piece: {
@@ -23,7 +24,6 @@ export interface BoardViewState {
   tiles: FormatedTile[][];
   selectedTile: string | null;
   possibleMoves: string[] | null;
-  previousMove: null | [string, string];
   tileWidth: number;
   boardWidth: number;
   gameMode: string;
@@ -44,7 +44,6 @@ export const boardViewInitialState: BoardViewState = {
   selectedTile: null,
   tiles: [],
   possibleMoves: null,
-  previousMove: null,
   gameMode: "AGAINST_CPU",
   tileWidth: 90,
   boardWidth: 750,
@@ -57,12 +56,11 @@ export type BoardViewAction =
   | { type: "INIT"; board: Board; gameMode: string }
   | { type: "NEW_TURN" }
   | { type: "BOARD_WIDTH_CHANGE"; boardWidth: number; tileWidth: number }
-  | { type: "PIECE_CLICK"; tile: string }
+  | { type: "TILE_SELECT"; tile: string }
   | { type: "PIECE_DRAG"; tile: string; colour: PieceColour; name: PieceName }
   | { type: "PIECE_DRAG_CONTINUE"; x: number; y: number }
   | { type: "PIECE_DRAG_STOP" }
-  | { type: "NO_TILE_SELECTED" }
-  | { type: "MOVE"; from: string; to: string };
+  | { type: "NO_TILE_SELECTED" };
 
 type TBoardViewContext = [BoardViewState, Dispatch<BoardViewAction>];
 
@@ -80,19 +78,12 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
     }
 
     case "NEW_TURN": {
-      const { board, previousMove } = state;
+      const { board } = state;
       if (!board) throw Error("Board not set");
-      let newPreviousMove: null | [string, string] = null;
-      if (board.state.turn === 1) {
-        newPreviousMove = null;
-      } else {
-        newPreviousMove = previousMove ? previousMove : null;
-      }
-      const tiles = formatTiles(board, newPreviousMove);
+      const tiles = formatTiles(board);
       return {
         ...state,
         tiles,
-        previousMove: newPreviousMove,
         selectedTile: null,
         draging: false,
         draggedPiece: null,
@@ -110,7 +101,7 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
       if (!state.board) throw Error("Board not set");
       const possibleMovesWithDetails = getPossibleMovesWithDetails(tile, state.board);
       const possibleMoves = possibleMovesWithDetails.map((m) => m.tileTo.key);
-      const tiles = formatTiles(state.board, null, possibleMovesWithDetails, tile, tile);
+      const tiles = formatTiles(state.board, possibleMovesWithDetails, tile, tile);
       const draggedPiece = { tile, colour, name };
       return { ...state, tiles, possibleMoves, draggedPiece, draging: true, selectedTile: tile };
     }
@@ -122,28 +113,22 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
 
     case "PIECE_DRAG_STOP": {
       if (!state.board) throw Error("Board not set");
-      const tiles = formatTiles(state.board, state.previousMove);
+      const tiles = formatTiles(state.board);
       return { ...state, tiles, draggedPiece: null, draggedPieceCoords: null };
     }
 
-    case "MOVE": {
-      if (!state.board) throw Error("Board not set");
-      const { from, to } = action;
-      return { ...state, previousMove: [from, to] };
-    }
-
-    case "PIECE_CLICK": {
+    case "TILE_SELECT": {
       const { tile } = action;
       if (!state.board) throw Error("Board not set");
       const possibleMovesWithDetails = getPossibleMovesWithDetails(tile, state.board);
       const possibleMoves = possibleMovesWithDetails.map((m) => m.tileTo.key);
-      const tiles = formatTiles(state.board, null, possibleMovesWithDetails, tile);
+      const tiles = formatTiles(state.board, possibleMovesWithDetails, tile);
       return { ...state, tiles, possibleMoves, selectedTile: tile };
     }
 
     case "NO_TILE_SELECTED": {
       if (!state.board) throw Error("Board not set");
-      const tiles = formatTiles(state.board, state.previousMove);
+      const tiles = formatTiles(state.board);
       return {
         ...state,
         tiles,
@@ -165,11 +150,13 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
  */
 export function formatTiles(
   board: Board,
-  previousMove?: [string, string] | null,
   possibleMoves: PossibleMove[] = [],
   movingPiece?: string,
   draggedPiece?: string
 ): FormatedTile[][] {
+  const lastMove = board.state.getLastMove();
+  const playerTurn = board.state.player;
+
   return board.yAxis.map((y) => {
     return board.xAxis.map((x) => {
       const key = x + y;
@@ -182,7 +169,7 @@ export function formatTiles(
       let isMovingPiece = false;
       if (movingPiece && movingPiece === key) isMovingPiece = true;
 
-      const isPreviousMove = previousMove ? previousMove.includes(key) : false;
+      const isPreviousMove = lastMove ? lastMove.includes(key) : false;
 
       const _piece = board.state.getPiece(tile.key);
       let piece = null;
@@ -199,6 +186,7 @@ export function formatTiles(
       }
 
       return {
+        playerTurn,
         key,
         colour: tile.colour,
         piece,

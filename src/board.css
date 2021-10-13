@@ -55,11 +55,11 @@
   border-right: none;
 }
 
-.koth-board.red-turn {
+.koth-board.black-turn {
   border-top-color: var(--red);
 }
 
-.koth-board.blue-turn {
+.koth-board.white-turn {
   border-bottom-color: var(--blue);
 }
 
@@ -98,7 +98,6 @@
   top: 4px;
   left: 4px;
   position: absolute;
-  z-index: 2;
   opacity: 0;
   /*border: dashed 3px rgba(173, 160, 149, 0.6);
   transition: all 0.3s;*/
@@ -108,23 +107,23 @@
   border-color: rgba(153, 151, 136, 0.6);
 }
 
-.tile.possible-move.red-turn .tile-inner .highlight {
+.tile.possible-move.black-turn .tile-inner .highlight {
   background: rgba(255, 196, 0, 0.08);
   border-color: var(--red);
   opacity: 1;
 }
 
-.tile.possible-move.blue-turn .tile-inner .highlight {
+.tile.possible-move.white-turn .tile-inner .highlight {
   background: rgba(0, 183, 255, 0.08);
   border-color: var(--blue);
   opacity: 1;
 }
 
-.tile.red-turn.moving-piece .tile-inner {
+.tile.black-turn.moving-piece .tile-inner {
   background: rgba(255, 159, 80, 0.5) !important;
 }
 
-.tile.blue-turn.moving-piece .tile-inner {
+.tile.white-turn.moving-piece .tile-inner {
   background: rgba(80, 191, 255, 0.5) !important;
 }
 
@@ -184,11 +183,11 @@
   height: 6px;
 }
 
-.koth-board.red-turn .highlight-corner {
+.tile.black-turn .highlight-corner {
   border-color: var(--red);
 }
 
-.koth-board.blue-turn .highlight-corner {
+.tile.white-turn .highlight-corner {
   border-color: var(--blue);
 }
 
@@ -223,4 +222,46 @@
   to {
     opacity: 1;
   }
+}
+
+.dialog-overlay {
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  position: fixed;
+  inset: 0px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dialog-content {
+  background: #fff;
+  width: 500px;
+  height: 500px;
+  border-radius: 15px;
+}
+
+@media only screen and (max-width: 600px) {
+  .ReactModal__Content {
+    inset: 0px;
+  }
+}
+
+.ReactModal__Content {
+  inset: 250px;
+}
+
+.ReactModal__Overlay {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
 }

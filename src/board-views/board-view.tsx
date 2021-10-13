@@ -6,25 +6,24 @@ import Tile from "./tile";
 import { Board } from "../board-logic/board/board";
 import { boardViewReducer, boardViewInitialState, BoardViewContext } from "./board-view-reducer";
 
-const moveSound = new Audio("../move.mp3");
-moveSound.volume = 0.3;
-
 interface BoardViewProps {
   board: Board;
-  turn: number | null;
+  // 'token' is randmon number that changes everytime board.state changes.
+  // Used by parent component to trigger board-view re-renders
+  token: number | null;
   gameMode: string;
   playable: boolean;
   boardMaxWidth: number;
-  simulateMove: null | [string, string];
-  onPieceMove: (from: string, to: string) => void;
+  selectTile: null | string;
+  onPieceMove?: (from: string, to: string) => void;
 }
 
 /**
  *
  */
 export default function BoardView(opt: BoardViewProps) {
-  console.log("RENDER");
-  const { board, turn, playable, gameMode, boardMaxWidth, simulateMove, onPieceMove } = opt;
+  //console.log("RENDER");
+  const { board, token, playable, gameMode, boardMaxWidth, selectTile, onPieceMove } = opt;
   const { totalTurns } = board.state;
   const [state, dispatch] = useReducer(boardViewReducer, boardViewInitialState);
   const { selectedTile, draggedPiece, draggedPieceCoords } = state;
@@ -37,38 +36,21 @@ export default function BoardView(opt: BoardViewProps) {
   }, []);
 
   /**
-   * On new turn
+   * On new turn.
+   * Or on board reset.
    */
   useEffect(() => {
     dispatch({ type: "NEW_TURN" });
-    if (turn !== 1) {
-      moveSound.play();
-    }
-  }, [turn]);
+  }, [token]);
 
   /**
    * simulate CPU move
    */
   useEffect(() => {
-    let timeoutId = 0;
-    if (simulateMove) {
-      let [from, to] = simulateMove;
-      dispatch({ type: "PIECE_CLICK", tile: from });
-      const seed = board.state.seed;
-      timeoutId = window.setTimeout(() => {
-        // Make sure there's no turn mis-match.
-        // e.g User pressing the 'Restart' button
-        // while move animation is hapening
-        if (board.state.seed !== seed) return;
-        dispatch({ type: "MOVE", from, to });
-        onPieceMove(from, to);
-      }, 1500);
+    if (selectTile) {
+      dispatch({ type: "TILE_SELECT", tile: selectTile });
     }
-
-    return () => {
-      if (timeoutId) window.clearTimeout(timeoutId);
-    };
-  }, [simulateMove, onPieceMove]);
+  }, [selectTile, onPieceMove]);
 
   /**
    * Set Board and Tile width
@@ -118,6 +100,7 @@ export default function BoardView(opt: BoardViewProps) {
   const boardRowsHtml = state.tiles.map((tileRows, i) => {
     const rowHtml = tileRows.map((tileRow) => {
       const {
+        playerTurn,
         key,
         colour,
         piece,
@@ -131,6 +114,7 @@ export default function BoardView(opt: BoardViewProps) {
 
       return (
         <Tile
+          playerTurn={playerTurn}
           key={key}
           colour={colour}
           tileKey={key}

@@ -9,3 +9,10 @@ export const useWindowEvent = (event: any, callback: any) => {
     return () => window.removeEventListener(event, callback);
   }, [event, callback]);
 };
+
+/**
+ *
+ */
+export function delay(duration: number) {
+  return new Promise((resolve) => setTimeout(resolve, duration));
+}

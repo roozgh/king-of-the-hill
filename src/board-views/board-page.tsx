@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, memo, useRef } from "react";
-import { useWindowEvent } from "../utils";
+import { useWindowEvent, delay } from "../utils";
 import BoardView from "./board-view";
 import BoardInfo from "./board-info";
 import { getMoveCandidates } from "../board-logic/ai/move-finder";
@@ -10,6 +10,9 @@ import { EvaluatorPlugin } from "../board-logic/ai/score-evaluator";
 const BoardMemo = memo(BoardView);
 
 const boardMaxWidth = 900;
+
+const moveSound = new Audio("../move.mp3");
+moveSound.volume = 0.3;
 
 const archerOnDarkDarkTiles: EvaluatorPlugin = (tile, piece) => {
   if (piece.name === "ARCHER" && tile.colour === "DARK") return 10;
@@ -33,25 +36,28 @@ const kingOutOfPosition: EvaluatorPlugin = (tile, piece) => {
 const scoreEvalPlugins = [archerOnDarkDarkTiles, kingOutOfPosition];
 
 const defaultBoardState: JSONBoardState = [
-  [
-    ["D1", "WHITE", "KING"],
-    ["A1", "WHITE", "CHARIOT"],
-    ["B1", "WHITE", "ARCHER"],
-    ["F1", "WHITE", "ARCHER"],
-    ["B2", "WHITE", "SPY"],
-    ["D2", "WHITE", "MAGICIAN"],
-    ["F2", "WHITE", "TOWER"],
-    ["G1", "WHITE", "CHARIOT"],
+  {
+    lastMove: null,
+    pieces: [
+      ["D1", "WHITE", "KING"],
+      ["A1", "WHITE", "CHARIOT"],
+      ["B1", "WHITE", "ARCHER"],
+      ["F1", "WHITE", "ARCHER"],
+      ["B2", "WHITE", "SPY"],
+      ["D2", "WHITE", "MAGICIAN"],
+      ["F2", "WHITE", "TOWER"],
+      ["G1", "WHITE", "CHARIOT"],
 
-    ["D7", "BLACK", "KING"],
-    ["A7", "BLACK", "CHARIOT"],
-    ["B7", "BLACK", "ARCHER"],
-    ["F7", "BLACK", "ARCHER"],
-    ["B6", "BLACK", "SPY"],
-    ["D6", "BLACK", "MAGICIAN"],
-    ["F6", "BLACK", "TOWER"],
-    ["G7", "BLACK", "CHARIOT"],
-  ],
+      ["D7", "BLACK", "KING"],
+      ["A7", "BLACK", "CHARIOT"],
+      ["B7", "BLACK", "ARCHER"],
+      ["F7", "BLACK", "ARCHER"],
+      ["B6", "BLACK", "SPY"],
+      ["D6", "BLACK", "MAGICIAN"],
+      ["F6", "BLACK", "TOWER"],
+      ["G7", "BLACK", "CHARIOT"],
+    ],
+  },
 ];
 
 const board = new Board({ x: 7, y: 7, hills: ["D4"] });
@@ -65,12 +71,14 @@ export default function BoardPage() {
   const [boardWidth, updateBoardWidth] = useState(0);
   const [boardInfoSize, updateBoardInfoSize] = useState<{ w: number; h: number }>({ w: 0, h: 0 });
   const [gameMode] = useState("AGAINST_CPU");
-  const [moveToPlay, setMoveToPlay] = useState<null | [string, string]>(null);
+  const [selectTile, setSelectTile] = useState<null | string>(null);
   const moveToPlayTimeoutId = useRef(0);
   const [playable, updatePlayable] = useState(true);
-  // Why have a seperate 'turn' variable when board.state.turn exists?
-  // To force react to re-render board-view after board.move()
-  const [turn, setTurn] = useState(1);
+  // 'token' is a random arbitrary number.
+  // It's used to force react to re-render board-view after board.move() or board.reset()
+  // I initially tried to listern to board.state.turn changes inside board-view but
+  // that didn't always trigger a re-render. Weird React bug :/
+  const [token, setToken] = useState(Math.random());
 
   /**
    *
@@ -97,6 +105,37 @@ export default function BoardPage() {
   useWindowEvent("resize", adjustBoardSize);
 
   /**
+   *
+   */
+  const simulateComputerPlay = useCallback(async () => {
+    // Disable board interaction if it's computer's turn
+    updatePlayable(false);
+    const seed = board.state.seed;
+
+    await delay(500);
+
+    const moveCandidate = getMoveCandidates(board, scoreEvalPlugins);
+    if (moveCandidate === null) {
+      return console.error("No move candidates found");
+    }
+    const [moveFrom, moveTo] = moveCandidate;
+
+    setSelectTile(moveFrom);
+    await delay(1500);
+
+    // Make sure there's no turn mis-match.
+    // e.g User pressing the 'Restart' button
+    // while move animation is hapening
+    if (board.state.seed !== seed) return;
+
+    board.move(moveFrom, moveTo);
+    setToken(Math.random());
+    moveSound.play();
+    setSelectTile(null);
+    updatePlayable(true);
+  }, []);
+
+  /**
    * Called when player makes a new move
    */
   const onPieceMove = useCallback(
@@ -106,55 +145,45 @@ export default function BoardPage() {
         return;
       }
       board.move(from, to);
-      setTurn(board.state.turn);
-      if (board.state.status !== "ACTIVE") return;
+      setToken(Math.random());
+      if (board.state.turn !== 1) moveSound.play();
+
       if (gameMode === "AGAINST_HUMAN") return;
-      if (board.state.player === "WHITE") {
-        // Disable board interaction if it's computer's turn
-        updatePlayable(true);
-      } else {
-        updatePlayable(false);
-        // Simulate computer play
-        moveToPlayTimeoutId.current = window.setTimeout(() => {
-          if (!board) return;
-          const moveCandidate = getMoveCandidates(board, scoreEvalPlugins);
-          if (moveCandidate === null) {
-            return console.error("No move candidates found");
-          }
-          setMoveToPlay(moveCandidate);
-          moveToPlayTimeoutId.current = 0;
-        }, 500);
-      }
+      if (board.state.status !== "ACTIVE") return;
+      if (board.state.player === "WHITE") return;
+      simulateComputerPlay();
     },
-    [gameMode]
+    [gameMode, simulateComputerPlay]
   );
 
   /**
    *
    */
   function onRestart() {
-    if (board.state.turn > 1) {
-      // Clear move simulation timeout if it exists
-      if (moveToPlayTimeoutId.current) {
-        clearTimeout(moveToPlayTimeoutId.current);
-      }
-      board.state.reset();
-      setTurn(1);
-      updatePlayable(true);
+    if (board.state.turn === 1) return;
+    board.state.reset();
+    setToken(Math.random());
+    setSelectTile(null);
+    updatePlayable(true);
+    // Clear move simulation timeout if it exists
+    if (moveToPlayTimeoutId.current) {
+      clearTimeout(moveToPlayTimeoutId.current);
     }
   }
 
   return (
     <div className="koth-page">
       <div className={`koth-board-wrapper ${screenSize}`}>
-        <div className={`koth-board ${board.state.player === "WHITE" ? "blue-turn" : "red-turn"}`}>
+        <div
+          className={`koth-board ${board.state.player === "WHITE" ? "white-turn" : "black-turn"}`}
+        >
           <BoardMemo
             board={board}
-            turn={turn}
+            token={token}
             gameMode={gameMode}
             playable={playable}
             boardMaxWidth={boardWidth}
-            simulateMove={moveToPlay}
+            selectTile={selectTile}
             onPieceMove={onPieceMove}
           />
         </div>

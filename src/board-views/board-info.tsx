@@ -1,5 +1,27 @@
+import { useState } from "react";
 import { Board } from "../board-logic/board/board";
 import { Piece } from "./piece";
+import Modal from "react-modal";
+import Tutorial from "./tutorial";
+
+const modalStyles = {
+  overlay: { zIndex: 1000 },
+  content: {
+    //width: "100%",
+    height: "100%",
+    transition: "all 1s",
+
+    //transform: "translate(-50%, -50%)",
+    //top: "50%",
+    //left: "50%",
+    //right: "auto",
+    //bottom: "auto",
+    //marginRight: "-50%",
+    //transform: "translate(-50%, -50%)",
+  },
+};
+
+Modal.setAppElement("#root");
 
 interface BoardInfoProps {
   board: Board;
@@ -18,6 +40,7 @@ interface CapturedPiecesProp {
  */
 export default function BoardInfo(props: BoardInfoProps) {
   const { board, restart, width, height } = props;
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   let turnInfo = "";
 
@@ -45,8 +68,21 @@ export default function BoardInfo(props: BoardInfoProps) {
         {turnInfo}
         <hr />
         <button onClick={restart}>RESTART</button>
+        <button onClick={() => setModalIsOpen(true)}>LEARN TO PLAY</button>
       </div>
       <CapturedPieces board={board} colour={"WHITE"} />
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen((val) => !val)}
+        shouldCloseOnOverlayClick
+        shouldCloseOnEsc
+        style={modalStyles}
+        //onAfterOpen={afterOpenModal}
+        //onRequestClose={closeModal}
+        contentLabel="Example Modal"
+      >
+        <Tutorial close={() => setModalIsOpen(false)} />
+      </Modal>
     </div>
   );
 }

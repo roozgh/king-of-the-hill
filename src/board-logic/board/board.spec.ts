@@ -16,10 +16,13 @@ describe("Board", () => {
 
   test("JSON State", () => {
     const JSONState: any = [
-      [
-        ["A1", "WHITE", "KING"],
-        ["A2", "BLACK", "ARCHER"],
-      ],
+      {
+        lastMove: null,
+        pieces: [
+          ["A1", "WHITE", "KING"],
+          ["A2", "BLACK", "ARCHER"],
+        ],
+      },
     ];
 
     const board = new Board({ x: 5, y: 5 });
@@ -33,14 +36,20 @@ describe("Board", () => {
 
     let newState = board.state.getJSONState();
     expect(newState).toEqual([
-      [
-        ["A1", "WHITE", "KING"],
-        ["A2", "BLACK", "ARCHER"],
-      ],
-      [
-        ["A2", "WHITE", "KING"],
-        [null, "BLACK", "ARCHER"],
-      ],
+      {
+        lastMove: null,
+        pieces: [
+          ["A1", "WHITE", "KING"],
+          ["A2", "BLACK", "ARCHER"],
+        ],
+      },
+      {
+        lastMove: ["A1", "A2"],
+        pieces: [
+          ["A2", "WHITE", "KING"],
+          [null, "BLACK", "ARCHER"],
+        ],
+      },
     ]);
 
     board.state.undo();
@@ -49,10 +58,13 @@ describe("Board", () => {
 
     newState = board.state.getJSONState();
     expect(newState).toEqual([
-      [
-        ["A1", "WHITE", "KING"],
-        ["A2", "BLACK", "ARCHER"],
-      ],
+      {
+        lastMove: null,
+        pieces: [
+          ["A1", "WHITE", "KING"],
+          ["A2", "BLACK", "ARCHER"],
+        ],
+      },
     ]);
   });
 });

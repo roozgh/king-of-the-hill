@@ -4,6 +4,7 @@ import { Piece } from "./piece";
 import { Colour, PieceName } from "../board-logic/piece";
 
 interface TileProps {
+  playerTurn: Colour;
   tileKey: string;
   colour: string;
   isHill: boolean;
@@ -14,12 +15,13 @@ interface TileProps {
   distanceFromPiece?: number | null;
   piece: { name: PieceName; colour: Colour } | null;
   playable: boolean;
-  onPieceMove: (from: string, to: string) => void;
+  onPieceMove?: (from: string, to: string) => void;
 }
 
 export default function Tile(opt: TileProps) {
   //console.log("TILE RENDER");
   const {
+    playerTurn,
     isHill,
     colour,
     isPossibleMove,
@@ -37,14 +39,6 @@ export default function Tile(opt: TileProps) {
   if (!board) throw Error("Board not defined");
 
   /**
-   *
-   */
-  function makeMove(from: string, to: string) {
-    dispatch({ type: "MOVE", from, to });
-    onPieceMove(from, to);
-  }
-
-  /**
    * For detecting piece drops on tile
    */
   function onMouseUp(e: MouseEvent) {
@@ -60,7 +54,7 @@ export default function Tile(opt: TileProps) {
     }
     // Else make move
     else {
-      makeMove(selectedTile, tileKey);
+      if (onPieceMove) onPieceMove(selectedTile, tileKey);
     }
   }
 
@@ -78,6 +72,7 @@ export default function Tile(opt: TileProps) {
    */
   function onPieceClick() {
     if (!piece) return;
+    if (!playable) return;
     if (selectedTile) {
       if (!possibleMoves) throw Error("'possibleMove' Array not set");
       // Check if move is legal
@@ -86,10 +81,10 @@ export default function Tile(opt: TileProps) {
       if (!moveIsLegal) {
         dispatch({ type: "NO_TILE_SELECTED" });
       } else {
-        makeMove(selectedTile, tileKey);
+        if (onPieceMove) onPieceMove(selectedTile, tileKey);
       }
     } else {
-      dispatch({ type: "PIECE_CLICK", tile: tileKey });
+      dispatch({ type: "TILE_SELECT", tile: tileKey });
     }
   }
 
@@ -108,7 +103,7 @@ export default function Tile(opt: TileProps) {
     }
     // Else make move
     else {
-      makeMove(selectedTile, tileKey);
+      if (onPieceMove) onPieceMove(selectedTile, tileKey);
     }
   }
 
@@ -117,8 +112,8 @@ export default function Tile(opt: TileProps) {
    */
   let classes = ["tile"];
 
-  if (board.state.player === "BLACK") classes.push("red-turn");
-  else classes.push("blue-turn");
+  if (playerTurn === "BLACK") classes.push("black-turn");
+  else classes.push("white-turn");
 
   if (isMovingPiece) classes.push("moving-piece");
   if (isHill) classes.push("hill");
@@ -163,12 +158,12 @@ export default function Tile(opt: TileProps) {
     if (board.state.status === "ACTIVE" && playable) {
       if (gameMode === "AGAINST_CPU") {
         // Can only move WHITE pieces & can only do it on WHITE's turn
-        if (board.state.player === "WHITE" && piece.colour === "WHITE") {
+        if (playerTurn === "WHITE" && piece.colour === "WHITE") {
           movable = true;
         }
       } else if (gameMode === "AGAINST_HUMAN") {
         // Can only move your pieces when your turn
-        if (board.state.player === piece.colour) {
+        if (playerTurn === piece.colour) {
           movable = true;
         }
       }

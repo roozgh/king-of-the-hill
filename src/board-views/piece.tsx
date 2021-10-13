@@ -96,7 +96,6 @@ export function Piece(opts: PieceProps) {
    */
   function onClick(e: MouseEvent) {
     if (!onPieceClick) return;
-    if (!movable) return;
     e.stopPropagation();
     onPieceClick();
   }

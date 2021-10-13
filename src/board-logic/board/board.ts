@@ -68,11 +68,11 @@ export class Board {
     if (movingPiece.name === "MAGICIAN" && capturedPiece) {
       newState.set(to, movingPiece);
       newState.set(from, capturedPiece);
-      this.state.addState(newState);
+      this.state.addState(newState, [from, to]);
     } else {
       newState.delete(from);
       newState.set(to, movingPiece);
-      this.state.addState(newState, capturedPiece);
+      this.state.addState(newState, [from, to], capturedPiece);
     }
 
     // Check if King has been captured

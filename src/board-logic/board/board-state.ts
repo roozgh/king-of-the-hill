@@ -4,14 +4,21 @@ const startingPlayer = "WHITE";
 
 type ActivePieces = Map<string, Piece>;
 
+// null on turn 1, [moveFrom, moveTo] on rest
+type LastMove = null | [string, string];
+
 interface State {
+  lastMove: LastMove;
   activePieces: ActivePieces;
   capturedPieces: Piece[];
 }
 
 type JSONBoardStateTileKey = string | null;
-type JSONBoardStateItem = [JSONBoardStateTileKey, Colour, PieceName];
-type JSONBoardStateSingle = JSONBoardStateItem[];
+type JSONBoardStatePiece = [JSONBoardStateTileKey, Colour, PieceName];
+type JSONBoardStateSingle = {
+  lastMove: LastMove;
+  pieces: JSONBoardStatePiece[];
+};
 export type JSONBoardState = JSONBoardStateSingle[];
 
 type Status = "ACTIVE" | "DRAW" | Colour;
@@ -25,7 +32,7 @@ export class BoardState {
   player: Colour = startingPlayer;
   status: Status = "ACTIVE";
   turn = 1;
-  seed = Math.random() * 1000000;
+  seed = generateSeed();
 
   /**
    * Takes a Tile key and returns its piece in current position
@@ -58,14 +65,24 @@ export class BoardState {
   }
 
   /**
+   * Returns last move that was played.
+   * If turn 1, returns null
+   */
+  getLastMove(): LastMove {
+    const state = this.stateHistory[this.turn - 1];
+    if (!state) throw new Error(`Invalid State for Turn: ${this.turn}`);
+    return state.lastMove;
+  }
+
+  /**
    *
    */
-  addState(newState: ActivePieces, capturedPiece?: Piece) {
+  addState(activePieces: ActivePieces, lastMove: LastMove, capturedPiece?: Piece) {
     const state = this.stateHistory[this.turn - 1];
     if (!state) throw new Error(`Invalid State for Turn: ${this.turn}`);
     const capturedPieces = state.capturedPieces.slice();
     if (capturedPiece) capturedPieces.push(capturedPiece);
-    this.stateHistory.push({ capturedPieces, activePieces: newState });
+    this.stateHistory.push({ capturedPieces, lastMove, activePieces });
     this.turn++;
   }
 
@@ -73,7 +90,7 @@ export class BoardState {
    *
    */
   undo() {
-    if (this.turn > 0) {
+    if (this.turn > 1) {
       this.stateHistory.pop();
       this.turn--;
       this.player = this.getPlayerColourFromTurn();
@@ -103,7 +120,7 @@ export class BoardState {
     this.stateHistory = this.stateHistory.slice(0, 1);
     this.status = "ACTIVE";
     this.player = startingPlayer;
-    this.seed = Math.random() * 1000000;
+    this.seed = generateSeed();
   }
 
   /**
@@ -113,16 +130,17 @@ export class BoardState {
     let boardStateJSON: JSONBoardState = [];
 
     this.stateHistory.forEach((state) => {
+      const { lastMove } = state;
       const capturedPieces = state.capturedPieces.map((piece) => {
-        const stateItem: JSONBoardStateItem = [null, piece.colour, piece.name];
+        const stateItem: JSONBoardStatePiece = [null, piece.colour, piece.name];
         return stateItem;
       });
       const activePieces = Array.from(state.activePieces).map(([key, piece]) => {
-        const stateItem: JSONBoardStateItem = [key, piece.colour, piece.name];
+        const stateItem: JSONBoardStatePiece = [key, piece.colour, piece.name];
         return stateItem;
       });
       const combinedStates = [...activePieces, ...capturedPieces];
-      boardStateJSON.push(combinedStates);
+      boardStateJSON.push({ pieces: combinedStates, lastMove });
     });
 
     return boardStateJSON;
@@ -135,8 +153,9 @@ export class BoardState {
     let state: State[] = [];
     let turn = 0;
 
-    stateJSON.forEach((stateJSONItem) => {
-      const capturedPieces = stateJSONItem
+    stateJSON.forEach((JSONStateItem) => {
+      const { pieces, lastMove } = JSONStateItem;
+      const capturedPieces = pieces
         .filter(([key]) => key === null)
         .map(([key, colour, name]) => {
           let piece = makePiece(name, colour);
@@ -145,19 +164,28 @@ export class BoardState {
 
       let activePieces = new Map();
 
-      stateJSONItem
+      pieces
         .filter(([key]) => key !== null)
         .forEach(([key, colour, name]) => {
           let piece = makePiece(name, colour);
           activePieces.set(key, piece);
         });
 
-      state.push({ capturedPieces, activePieces });
+      state.push({ capturedPieces, activePieces, lastMove });
       turn++;
     });
 
     this.stateHistory = state;
+    this.status = "ACTIVE";
     this.turn = turn;
     this.player = this.getPlayerColourFromTurn();
+    this.seed = generateSeed();
   }
+}
+
+/**
+ *
+ */
+function generateSeed() {
+  return Math.round(Math.random() * 10 ** 8);
 }

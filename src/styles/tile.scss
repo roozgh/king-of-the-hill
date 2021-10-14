@@ -5,6 +5,7 @@
   float: left;
   background: rgb(241, 240, 238);
   user-select: none;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,7 +23,7 @@
       background: color.adjust($white-prime, $alpha: -0.6) !important;
     }
     .highlight-corner {
-      border-color: $white-prime;
+      border-color: color.adjust($white-prime, $alpha: -0.2);
     }
   }
   &.black-turn {
@@ -30,13 +31,15 @@
       background: color.adjust($black-prime, $alpha: -0.6) !important;
     }
     .highlight-corner {
-      border-color: $black-prime;
+      border-color: color.adjust($black-prime, $alpha: -0.2);
     }
   }
 
   &.prev-move {
     .highlight-corner {
       border-color: rgba(155, 149, 126, 0.6);
+      animation: none;
+      opacity: 1;
     }
   }
 
@@ -44,10 +47,11 @@
     margin: 0px;
     background: rgb(235, 217, 138) !important;
   }
-}
 
-.piece {
-  user-select: none;
+  .piece {
+    user-select: none;
+    transition: transform 1s;
+  }
 }
 
 /*
@@ -56,48 +60,58 @@
 
 .highlight-corner {
   --corner-margin: 4px;
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   position: absolute;
   opacity: 0;
   z-index: 1;
   border: solid 3px rgb(216, 210, 200);
-  border-right: none;
-  border-bottom: none;
-  animation: highlightCornerExpand;
-  animation-duration: 0.4s;
+  animation-name: highlightCornerExpand;
+  animation-duration: 0.3s;
   animation-fill-mode: forwards;
 }
 
-.koth-board-wrapper.sm .highlight-corner {
-  --corner-margin: 3px;
-  border-width: 2px;
-  width: 6px;
-  height: 6px;
+.tile.sm .highlight-corner {
+  --corner-margin: 2px;
+  border-width: 3px;
+  width: 5px;
+  height: 5px;
 }
 
 .highlight-top-right {
   top: var(--corner-margin);
   right: var(--corner-margin);
-  transform: rotate(90deg);
+  border-left: none;
+  border-bottom: none;
+  animation-name: cornerTopRight;
 }
 
 .highlight-top-left {
   top: var(--corner-margin);
   left: var(--corner-margin);
+  border-right: none;
+  border-bottom: none;
+  animation-name: cornerTopLeft;
 }
 
 .highlight-bottom-left {
   bottom: var(--corner-margin);
   left: var(--corner-margin);
-  transform: rotate(-90deg);
+  border-right: none;
+  border-top: none;
+  animation-name: cornerBottomLeft;
 }
 
 .highlight-bottom-right {
   bottom: var(--corner-margin);
   right: var(--corner-margin);
-  transform: rotate(180deg);
+  border-left: none;
+  border-top: none;
+  animation-name: cornerBottomRight;
 }
+
+$trans-length: 3px;
+$trans-length-alt: -3px;
 
 @keyframes highlightCornerExpand {
   from {
@@ -106,5 +120,53 @@
 
   to {
     opacity: 1;
+  }
+}
+
+@keyframes cornerTopRight {
+  from {
+    opacity: 0;
+    transform: translate($trans-length-alt, $trans-length);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0px, 0px);
+  }
+}
+
+@keyframes cornerTopLeft {
+  from {
+    opacity: 0;
+    transform: translate($trans-length, $trans-length);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0px, 0px);
+  }
+}
+
+@keyframes cornerBottomLeft {
+  from {
+    opacity: 0;
+    transform: translate($trans-length, $trans-length-alt);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0px, 0px);
+  }
+}
+
+@keyframes cornerBottomRight {
+  from {
+    opacity: 0;
+    transform: translate($trans-length-alt, $trans-length-alt);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0px, 0px);
   }
 }

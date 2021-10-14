@@ -9,7 +9,7 @@ import { EvaluatorPlugin } from "../board-logic/ai/score-evaluator";
 
 const BoardMemo = memo(BoardView);
 
-const boardMaxWidth = 900;
+const boardMaxWidth = 850;
 
 const moveSound = new Audio("../move.mp3");
 moveSound.volume = 0.3;

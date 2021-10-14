@@ -7,8 +7,14 @@
   height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  /*align-items: center;*/
+  margin-top: 100px;
+  //align-items: center;
+}
+
+@media only screen and (max-width: 600px) {
+  .koth-page {
+    margin-top: 0px;
+  }
 }
 
 .koth-board-wrapper {
@@ -40,7 +46,7 @@
 }
 
 .koth-board {
-  border: 10px solid $gray;
+  border: 10px solid color.adjust($gray, $lightness: -15%);
   border-image-slice: 1;
   border-left: none;
   border-right: none;

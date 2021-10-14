@@ -1,0 +1,51 @@
+@use "sass:color";
+@use "./vars.scss" as *;
+
+.koth-tutorial {
+  .koth-tutorial-top {
+    height: 80px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    .piece {
+      transition: all 0.3s;
+      filter: grayscale(100%);
+      cursor: pointer;
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+    .selected {
+      .piece {
+        filter: none;
+        transform: scale(1.3);
+      }
+    }
+  }
+
+  .koth-tutorial-rules {
+    margin: 15px auto;
+    max-width: 450px;
+  }
+
+  .koth-tutorial-moves {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 20px;
+    opacity: 1;
+    animation: slideUp;
+    animation-duration: 0.5s;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}

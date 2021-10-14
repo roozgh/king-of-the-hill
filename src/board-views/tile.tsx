@@ -35,7 +35,8 @@ export default function Tile(opt: TileProps) {
   } = opt;
 
   const [state, dispatch] = useContext(BoardViewContext);
-  const { board, draggedPiece, selectedTile, possibleMoves, gameMode, tileWidth } = state;
+  const { board, draggedPiece, selectedTile, possibleMoves, gameMode, tileWidth, boardWidth } =
+    state;
   if (!board) throw Error("Board not defined");
 
   const status = board.state.status;
@@ -123,6 +124,8 @@ export default function Tile(opt: TileProps) {
 
   if (colour === "DARK") classes.push("dark");
   else classes.push("light");
+
+  if (boardWidth < 400) classes.push("sm");
 
   let tileStyle = { width: tileWidth, height: tileWidth };
 

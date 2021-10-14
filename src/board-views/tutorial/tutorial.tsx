@@ -8,6 +8,16 @@ import { JSONBoardState } from "../../board-logic/board/board-state";
 
 const board = new Board({ x: 5, y: 5 });
 
+const gameRulesTxt = `
+King Of The Hill is a turn based strategy game similar to Chess. There are 2 ways to win: 
+<br/>
+<ol>
+<li><u>Capture</u> the oponent King.</li>
+<li>Move your King to the <u>Hill</u> Tile <u>uncontested</u>. Uncontested means it cannot be captured or moved by your enemy on next turn.</li>
+</ol>
+Like Chess, each piece has a unique set of moves. Some pieces have special moves and properties. You can learn about pice movement by clickng on piece icons above.
+`;
+
 /**
  *
  */
@@ -74,7 +84,7 @@ export default function Tutorial() {
     // Play each sequence after a 2 sec delay
     const intervalId = window.setInterval(() => {
       simulatePlaySequences[sequenceIndex]();
-    }, 2000);
+    }, 1700);
 
     // Clean up
     return () => {
@@ -83,35 +93,33 @@ export default function Tutorial() {
     };
   }, [selectedTutPiece]);
 
-  /**
-   *
-   */
-  function onPiceClick(pieceName: PieceName) {
-    setSelectedTutPiece(pieceName);
-  }
-
   let pieces: JSX.Element[] = [];
   for (let pieceName in tutTypes) {
-    let width = 50;
-    if (pieceName === selectedTutPiece) width = 60;
+    let width = 60;
+    let wrapperDivClass = "";
+    if (pieceName === selectedTutPiece) wrapperDivClass = "selected";
     pieces.push(
-      <Piece
-        name={pieceName as PieceName}
-        colour={"WHITE"}
-        width={width}
-        onPieceClick={() => onPiceClick(pieceName as PieceName)}
-        key={pieceName}
-      />
+      <div
+        className={wrapperDivClass}
+        title={pieceName}
+        onClick={() => setSelectedTutPiece(pieceName as PieceName)}
+      >
+        <Piece name={pieceName as PieceName} colour={"WHITE"} width={width} key={pieceName} />
+      </div>
     );
   }
 
-  return (
-    <>
-      {pieces}
-      <br />
-      {selectedTutPiece && (
-        <>
+  let tutContent: JSX.Element;
+
+  if (selectedTutPiece) {
+    tutContent = (
+      <div className="koth-tutorial-moves">
+        <div>
+          <h3>{selectedTutPiece}</h3>
           <div>{tutTypes[selectedTutPiece].desc}</div>
+        </div>
+        <div>
+          <br />
           <BoardView
             board={board}
             token={token}
@@ -120,8 +128,20 @@ export default function Tutorial() {
             boardMaxWidth={300}
             selectTile={selectTile}
           />
-        </>
-      )}
-    </>
+        </div>
+      </div>
+    );
+  } else {
+    tutContent = (
+      <div dangerouslySetInnerHTML={{ __html: gameRulesTxt }} className="koth-tutorial-rules"></div>
+    );
+  }
+
+  return (
+    <div className="koth-tutorial">
+      <div className="koth-tutorial-top"> {pieces}</div>
+      <hr />
+      {tutContent}
+    </div>
   );
 }

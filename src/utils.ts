@@ -16,3 +16,14 @@ export const useWindowEvent = (event: any, callback: any) => {
 export function delay(duration: number) {
   return new Promise((resolve) => setTimeout(resolve, duration));
 }
+
+/**
+ *
+ */
+export function getWindowInnerWidth() {
+  let widths = [window.innerWidth];
+  if (window.screen?.width) {
+    widths.push(window.screen?.width);
+  }
+  return Math.min(widths[0], widths[1]);
+}

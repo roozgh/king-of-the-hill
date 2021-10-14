@@ -3,14 +3,14 @@
 
 .koth-tutorial {
   .koth-tutorial-top {
-    height: 80px;
+    //height: 80px;
     display: flex;
     justify-content: space-around;
     align-items: center;
+    flex-wrap: wrap;
     .piece {
       transition: all 0.3s;
       filter: grayscale(100%);
-      cursor: pointer;
       &:hover {
         transform: scale(1.2);
       }
@@ -35,6 +35,10 @@
     opacity: 1;
     animation: slideUp;
     animation-duration: 0.5s;
+    @media only screen and (max-width: 600px) {
+      grid-template-columns: 100%;
+      gap: 10px;
+    }
   }
 }
 

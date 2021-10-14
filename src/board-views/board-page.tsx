@@ -1,17 +1,18 @@
 import { useState, useCallback, useEffect, memo, useRef } from "react";
-import { useWindowEvent, delay } from "../utils";
+import { useWindowEvent, delay, getWindowInnerWidth } from "../utils";
 import BoardView from "./board-view";
 import BoardInfo from "./board-info";
 import { getMoveCandidates } from "../board-logic/ai/move-finder";
 import { Board } from "../board-logic/board/board";
 import { JSONBoardState } from "../board-logic/board/board-state";
 import { EvaluatorPlugin } from "../board-logic/ai/score-evaluator";
+import MoveSound from "./move.mp3";
 
 const BoardMemo = memo(BoardView);
 
 const boardMaxWidth = 850;
 
-const moveSound = new Audio("../move.mp3");
+const moveSound = new Audio(MoveSound);
 moveSound.volume = 0.3;
 
 const archerOnDarkDarkTiles: EvaluatorPlugin = (tile, piece) => {
@@ -84,8 +85,10 @@ export default function BoardPage() {
    *
    */
   const adjustBoardSize = useCallback(() => {
+    // 'window.innerWidth' is not reliable
+    const windowInnerWidth = getWindowInnerWidth();
     // Don't go bigger than max width
-    let newBoardWidth = Math.min(window.innerWidth, boardMaxWidth);
+    let newBoardWidth = Math.min(windowInnerWidth, boardMaxWidth);
     let screenSize: "sm" | "lg" = "sm";
     let boardInfoSize = { w: newBoardWidth, h: 200 };
 

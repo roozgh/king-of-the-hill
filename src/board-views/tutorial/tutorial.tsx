@@ -15,7 +15,7 @@ King Of The Hill is a turn based strategy game similar to Chess. There are 2 way
 <li><u>Capture</u> the oponent King.</li>
 <li>Move your King to the <u>Hill</u> Tile <u>uncontested</u>. Uncontested means it cannot be captured or moved by your enemy on next turn.</li>
 </ol>
-Like Chess, each piece has a unique set of moves. Some pieces have special moves and properties. You can learn about pice movement by clickng on piece icons above.
+Like Chess, each piece has a unique set of moves. Some pieces have special moves and properties. You can learn about piece movement by clickng on piece icons above.
 `;
 
 /**
@@ -100,11 +100,12 @@ export default function Tutorial() {
     if (pieceName === selectedTutPiece) wrapperDivClass = "selected";
     pieces.push(
       <div
+        key={pieceName}
         className={wrapperDivClass}
         title={pieceName}
         onClick={() => setSelectedTutPiece(pieceName as PieceName)}
       >
-        <Piece name={pieceName as PieceName} colour={"WHITE"} width={width} key={pieceName} />
+        <Piece name={pieceName as PieceName} colour={"WHITE"} width={width} />
       </div>
     );
   }
@@ -125,7 +126,7 @@ export default function Tutorial() {
             token={token}
             gameMode="AGAINST_HUMAN"
             playable={false}
-            boardMaxWidth={300}
+            boardMaxWidth={280}
             selectTile={selectTile}
           />
         </div>

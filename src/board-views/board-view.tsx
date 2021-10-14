@@ -1,4 +1,3 @@
-import "../board.css";
 import { Piece } from "./piece";
 import { useEffect, useCallback, useReducer, MouseEvent, memo } from "react";
 import { useWindowEvent } from "../utils";

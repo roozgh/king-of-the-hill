@@ -1,0 +1,110 @@
+@use "sass:color";
+@use "./vars.scss" as *;
+
+.tile {
+  float: left;
+  background: rgb(241, 240, 238);
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: background-color 0.3s;
+  &.dark {
+    background: color.adjust($board-tile, $lightness: -5%, $saturation: 1%);
+  }
+  &.light {
+    background: $board-tile;
+  }
+
+  &.white-turn {
+    &.moving-piece {
+      background: color.adjust($white-prime, $alpha: -0.6) !important;
+    }
+    .highlight-corner {
+      border-color: $white-prime;
+    }
+  }
+  &.black-turn {
+    &.moving-piece {
+      background: color.adjust($black-prime, $alpha: -0.6) !important;
+    }
+    .highlight-corner {
+      border-color: $black-prime;
+    }
+  }
+
+  &.prev-move {
+    .highlight-corner {
+      border-color: rgba(155, 149, 126, 0.6);
+    }
+  }
+
+  &.hill {
+    margin: 0px;
+    background: rgb(235, 217, 138) !important;
+  }
+}
+
+.piece {
+  user-select: none;
+}
+
+/*
+  CSS and Animation for little corners around the Tile when Tile is highlighted
+*/
+
+.highlight-corner {
+  --corner-margin: 4px;
+  width: 8px;
+  height: 8px;
+  position: absolute;
+  opacity: 0;
+  z-index: 1;
+  border: solid 3px rgb(216, 210, 200);
+  border-right: none;
+  border-bottom: none;
+  animation: highlightCornerExpand;
+  animation-duration: 0.4s;
+  animation-fill-mode: forwards;
+}
+
+.koth-board-wrapper.sm .highlight-corner {
+  --corner-margin: 3px;
+  border-width: 2px;
+  width: 6px;
+  height: 6px;
+}
+
+.highlight-top-right {
+  top: var(--corner-margin);
+  right: var(--corner-margin);
+  transform: rotate(90deg);
+}
+
+.highlight-top-left {
+  top: var(--corner-margin);
+  left: var(--corner-margin);
+}
+
+.highlight-bottom-left {
+  bottom: var(--corner-margin);
+  left: var(--corner-margin);
+  transform: rotate(-90deg);
+}
+
+.highlight-bottom-right {
+  bottom: var(--corner-margin);
+  right: var(--corner-margin);
+  transform: rotate(180deg);
+}
+
+@keyframes highlightCornerExpand {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

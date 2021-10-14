@@ -1,0 +1,95 @@
+@use "sass:color";
+@use "./vars.scss" as *;
+
+.koth-page {
+  background: $gray;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /*align-items: center;*/
+}
+
+.koth-board-wrapper {
+  &.lg {
+    .koth-board {
+      float: left;
+    }
+    .koth-board-info {
+      display: flex;
+      flex-wrap: wrap;
+      align-content: space-between;
+      padding-left: 20px;
+      .koth-captured-pieces {
+        height: 200px;
+        width: 120px;
+        border-radius: 5px;
+        .piece {
+          margin: 5px;
+        }
+      }
+    }
+  }
+  &.sm {
+    .koth-board-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+}
+
+.koth-board {
+  border: 10px solid $gray;
+  border-image-slice: 1;
+  border-left: none;
+  border-right: none;
+  &.black-turn {
+    border-top-color: $black-prime;
+  }
+  &.white-turn {
+    border-bottom-color: $white-prime;
+  }
+}
+
+.dialog-overlay {
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  position: fixed;
+  inset: 0px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dialog-content {
+  background: #fff;
+  width: 500px;
+  height: 500px;
+  border-radius: 15px;
+}
+
+@media only screen and (max-width: 600px) {
+  .ReactModal__Content {
+    inset: 0px;
+  }
+}
+
+.ReactModal__Content {
+  inset: 250px;
+}
+
+.ReactModal__Overlay {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
+}

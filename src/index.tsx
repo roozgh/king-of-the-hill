@@ -1,6 +1,6 @@
+import "./styles/index.scss";
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
 import BoardPage from "./board-views/board-page";
 import reportWebVitals from "./reportWebVitals";
 import { store } from "./store/store";

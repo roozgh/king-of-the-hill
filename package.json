@@ -47,6 +47,7 @@
   "devDependencies": {
     "@types/react-modal": "^3.12.1",
     "jest": "26.6.0",
-    "ts-jest": "^27.0.5"
+    "sass": "^1.42.1",
+    "ts-jest": "^26.0.5"
   }
 }

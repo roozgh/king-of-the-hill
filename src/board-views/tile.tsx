@@ -148,7 +148,7 @@ export default function Tile(opt: TileProps) {
   let pieceElement = null;
   if (piece) {
     // Piece size always 85% of Tile size
-    let pieceWidth = Math.floor((tileWidth * 85) / 100);
+    let pieceWidth = Math.floor((tileWidth * 80) / 100);
     // If piece is selected, increase its size
     if (selectedTile === tileKey) {
       pieceWidth += 5;
@@ -183,10 +183,8 @@ export default function Tile(opt: TileProps) {
 
   return (
     <div onMouseUp={onMouseUp} onClick={onClick} className={classes.join(" ")} style={tileStyle}>
-      <div className="tile-inner">
-        {pieceElement}
-        {highlightHtml}
-      </div>
+      {pieceElement}
+      {highlightHtml}
     </div>
   );
 }

@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/king-of-the-hil/static/css/main.49be30cf.chunk.css",
+    "main.js": "/king-of-the-hil/static/js/main.699f0ef5.chunk.js",
+    "main.js.map": "/king-of-the-hil/static/js/main.699f0ef5.chunk.js.map",
+    "runtime-main.js": "/king-of-the-hil/static/js/runtime-main.aa9c4dd5.js",
+    "runtime-main.js.map": "/king-of-the-hil/static/js/runtime-main.aa9c4dd5.js.map",
+    "static/js/2.4a08768f.chunk.js": "/king-of-the-hil/static/js/2.4a08768f.chunk.js",
+    "static/js/2.4a08768f.chunk.js.map": "/king-of-the-hil/static/js/2.4a08768f.chunk.js.map",
+    "static/js/3.aaf93e19.chunk.js": "/king-of-the-hil/static/js/3.aaf93e19.chunk.js",
+    "static/js/3.aaf93e19.chunk.js.map": "/king-of-the-hil/static/js/3.aaf93e19.chunk.js.map",
+    "index.html": "/king-of-the-hil/index.html",
+    "static/css/main.49be30cf.chunk.css.map": "/king-of-the-hil/static/css/main.49be30cf.chunk.css.map",
+    "static/js/2.4a08768f.chunk.js.LICENSE.txt": "/king-of-the-hil/static/js/2.4a08768f.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.aa9c4dd5.js",
+    "static/js/2.4a08768f.chunk.js",
+    "static/css/main.49be30cf.chunk.css",
+    "static/js/main.699f0ef5.chunk.js"
+  ]
+}

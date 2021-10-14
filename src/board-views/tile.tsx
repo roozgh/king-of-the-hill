@@ -38,6 +38,8 @@ export default function Tile(opt: TileProps) {
   const { board, draggedPiece, selectedTile, possibleMoves, gameMode, tileWidth } = state;
   if (!board) throw Error("Board not defined");
 
+  const status = board.state.status;
+
   /**
    * For detecting piece drops on tile
    */
@@ -73,6 +75,7 @@ export default function Tile(opt: TileProps) {
   function onPieceClick() {
     if (!piece) return;
     if (!playable) return;
+    if (status !== "ACTIVE") return;
     if (selectedTile) {
       if (!possibleMoves) throw Error("'possibleMove' Array not set");
       // Check if move is legal

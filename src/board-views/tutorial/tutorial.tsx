@@ -1,21 +1,17 @@
 import { useState, useEffect } from "react";
-import { Board } from "../board-logic/board/board";
-import BoardView from "./board-view";
-import { PieceName } from "../board-logic/piece";
+import { Board } from "../../board-logic/board/board";
+import BoardView from "../board-view";
+import { PieceName } from "../../board-logic/piece";
 import { tutTypes } from "./tutorial-types";
-import { Piece } from "./piece";
-import { JSONBoardState } from "../board-logic/board/board-state";
-
-interface TutorialProps {
-  close: () => void;
-}
+import { Piece } from "../piece";
+import { JSONBoardState } from "../../board-logic/board/board-state";
 
 const board = new Board({ x: 5, y: 5 });
 
 /**
  *
  */
-export default function Tutorial({ close }: TutorialProps) {
+export default function Tutorial() {
   const [selectTile, setSelectTile] = useState<null | string>(null);
   const [selectedTutPiece, setSelectedTutPiece] = useState<PieceName | null>(null);
   const [token, setToken] = useState(Math.random());
@@ -111,9 +107,6 @@ export default function Tutorial({ close }: TutorialProps) {
 
   return (
     <>
-      <button onClick={close}>Close</button>
-      <div className="koth-tutorial">How To Play</div>
-      <br />
       {pieces}
       <br />
       {selectedTutPiece && (

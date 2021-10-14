@@ -1,5 +1,5 @@
-import { PieceName } from "../board-logic/piece";
-import { JSONBoardState } from "../board-logic/board/board-state";
+import { PieceName } from "../../board-logic/piece";
+import { JSONBoardState } from "../../board-logic/board/board-state";
 
 type TutItem = {
   state: JSONBoardState;

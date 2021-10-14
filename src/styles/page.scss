@@ -1,0 +1,48 @@
+@use "sass:color";
+@use "./vars.scss" as *;
+
+body {
+  background: $gray;
+  margin: 0;
+  color: color.adjust($gray, $lightness: -30%);
+  font-size: 1.23em;
+  //font-family: "Patrick Hand", cursive;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+hr {
+  height: 0px;
+  border: none;
+  border-top: solid 1px color.adjust($gray, $lightness: -10%);
+}
+
+button {
+  padding: 5px 20px;
+  background: color.adjust($gray, $lightness: -18%);
+  color: $gray;
+  border: none;
+  font-size: 0.9em;
+  border-radius: 5px;
+  margin: 2px;
+  &:hover {
+    cursor: pointer;
+    background-color: color.adjust($gray, $lightness: -22%);
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  button {
+    border-radius: 3px;
+    padding: 3px 12px;
+    font-size: 0.7em;
+  }
+}

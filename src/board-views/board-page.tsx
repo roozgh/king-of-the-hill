@@ -148,9 +148,15 @@ export default function BoardPage() {
       setToken(Math.random());
       if (board.state.turn !== 1) moveSound.play();
 
+      // Can't move or click pieces if game over
+      if (board.state.status !== "ACTIVE") {
+        return updatePlayable(false);
+      }
+
       if (gameMode === "AGAINST_HUMAN") return;
-      if (board.state.status !== "ACTIVE") return;
       if (board.state.player === "WHITE") return;
+      // If game not over and it's Black's turn
+      // and game mode is Against CPU, play CPU's turn
       simulateComputerPlay();
     },
     [gameMode, simulateComputerPlay]

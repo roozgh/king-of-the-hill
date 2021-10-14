@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@headlessui/react": "^1.4.1",
     "@reduxjs/toolkit": "^1.6.2",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",

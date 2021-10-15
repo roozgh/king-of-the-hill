@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Board } from "../board-logic/board/board";
-import { Piece } from "./piece";
+import { Piece } from "../components/piece/piece";
 import { Modal } from "../components/modal";
 import Tutorial from "./tutorial/tutorial";
-import questionSvg from "./images/question.svg";
-import restartSvg from "./images/restart.svg";
+import questionSvg from "./assets/question.svg";
+import restartSvg from "./assets/restart.svg";
 
 interface BoardInfoProps {
   board: Board;

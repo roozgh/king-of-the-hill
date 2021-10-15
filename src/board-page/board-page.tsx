@@ -1,12 +1,12 @@
 import { useState, useCallback, useEffect, memo, useRef } from "react";
 import { useWindowEvent, delay, getWindowInnerWidth } from "../utils";
-import BoardView from "./board-view";
+import BoardView from "../components/board-view/board-view";
 import BoardInfo from "./board-info";
 import { getMoveCandidates } from "../board-logic/ai/move-finder";
 import { Board } from "../board-logic/board/board";
 import { JSONBoardState } from "../board-logic/board/board-state";
 import { EvaluatorPlugin } from "../board-logic/ai/score-evaluator";
-import MoveSound from "./images/move.mp3";
+import MoveSound from "./assets/move.mp3";
 
 const BoardMemo = memo(BoardView);
 

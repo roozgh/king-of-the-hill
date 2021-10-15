@@ -1,8 +1,8 @@
-import { Piece } from "./piece";
+import { Piece } from "../piece/piece";
 import { useEffect, useCallback, useReducer, MouseEvent } from "react";
-import { useWindowEvent } from "../utils";
+import { useWindowEvent } from "../../utils";
 import Tile from "./tile";
-import { Board } from "../board-logic/board/board";
+import { Board } from "../../board-logic/board/board";
 import { boardViewReducer, boardViewInitialState, BoardViewContext } from "./board-view-reducer";
 
 interface BoardViewProps {

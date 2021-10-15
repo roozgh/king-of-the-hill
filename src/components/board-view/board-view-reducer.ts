@@ -1,7 +1,7 @@
 import { createContext, Dispatch } from "react";
-import { Board } from "../board-logic/board/board";
-import { Colour as PieceColour, PieceName } from "../board-logic/piece";
-import { getPossibleMovesWithDetails, PossibleMove } from "../board-logic/possible-moves";
+import { Board } from "../../board-logic/board/board";
+import { Colour as PieceColour, PieceName } from "../../board-logic/piece";
+import { getPossibleMovesWithDetails, PossibleMove } from "../../board-logic/possible-moves";
 
 interface FormatedTile {
   playerTurn: PieceColour;

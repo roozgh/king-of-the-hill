@@ -1,7 +1,7 @@
 import { useContext, CSSProperties, MouseEvent } from "react";
 import { BoardViewContext } from "./board-view-reducer";
-import { Piece } from "./piece";
-import { Colour, PieceName } from "../board-logic/piece";
+import { Piece } from "../piece/piece";
+import { Colour, PieceName } from "../../board-logic/piece";
 
 interface TileProps {
   playerTurn: Colour;

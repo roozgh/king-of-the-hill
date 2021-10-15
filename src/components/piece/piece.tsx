@@ -1,5 +1,5 @@
 import { useRef, CSSProperties, MouseEvent } from "react";
-import { Colour, PieceName } from "../board-logic/piece";
+import { Colour, PieceName } from "../../board-logic/piece";
 
 import whiteKing from "./images/white/king.png";
 import whiteMagician from "./images/white/magician.png";

@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Board } from "../../board-logic/board/board";
-import BoardView from "../board-view";
+import BoardView from "../../components/board-view/board-view";
 import { PieceName } from "../../board-logic/piece";
 import { pieceTutorials } from "./piece-tutorials";
-import { Piece } from "../piece";
+import { Piece } from "../../components/piece/piece";
 import { JSONBoardState } from "../../board-logic/board/board-state";
 
 const board = new Board({ x: 5, y: 5 });

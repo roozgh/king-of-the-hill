@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Board } from "../../board-logic/board/board";
 import BoardView from "../board-view";
 import { PieceName } from "../../board-logic/piece";
-import { tutTypes } from "./tutorial-types";
+import { pieceTutorials } from "./piece-tutorials";
 import { Piece } from "../piece";
 import { JSONBoardState } from "../../board-logic/board/board-state";
 
@@ -12,10 +12,14 @@ const gameRulesTxt = `
 King Of The Hill is a turn based strategy game similar to Chess. There are 2 ways to win: 
 <br/>
 <ol>
-<li><u>Capture</u> the oponent King.</li>
-<li>Move your King to the <u>Hill</u> Tile <u>uncontested</u>. Uncontested means it cannot be captured or moved by your enemy on next turn.</li>
+<li><u title='Take an oponent piece with your piece'>Capture</u> the oponent King.</li>
+<li>
+  Move your King to the <u title='Hill is the golden tile in the middle of the board'>Hill</u> Tile 
+  <u title='Cannot be captured or moved on next turn'>uncontested</u>. Uncontested means it cannot be captured or moved by thr opponent on next turn.
+</li>
 </ol>
-Like Chess, each piece has a unique set of moves. Some pieces have special moves and properties. You can learn about piece movement by clickng on piece icons above.
+Each game lasts ${board.totalTurns} turns. Like Chess, each piece has a unique set of moves. 
+Some pieces have special moves and properties. You can learn about piece movement by clickng on piece icons above.
 `;
 
 /**
@@ -24,7 +28,7 @@ Like Chess, each piece has a unique set of moves. Some pieces have special moves
 export default function Tutorial() {
   const [selectTile, setSelectTile] = useState<null | string>(null);
   const [selectedTutPiece, setSelectedTutPiece] = useState<PieceName | null>(null);
-  const [token, setToken] = useState(Math.random());
+  const [token, setToken] = useState(0);
 
   useEffect(() => {
     return () => console.log("TUT CLEAN UP");
@@ -36,17 +40,18 @@ export default function Tutorial() {
    */
   useEffect(() => {
     if (!selectedTutPiece) return;
+
     // Get all tutorials for selected Piece
-    const tutorials = tutTypes[selectedTutPiece].tutorials;
+    const { moves } = pieceTutorials[selectedTutPiece];
     // Always start with the first tutorial
-    let tutItemIndex = 0;
+    let tutMoveIndex = 0;
     let move: [string, string];
     let boardState: JSONBoardState;
 
     // Set tutorial state and move
     function initState() {
-      move = tutorials[tutItemIndex].move;
-      boardState = tutorials[tutItemIndex].state;
+      move = moves[tutMoveIndex].move;
+      boardState = moves[tutMoveIndex].state;
       board.state.setStateFromJSON(boardState);
       setToken(Math.random());
     }
@@ -69,12 +74,12 @@ export default function Tutorial() {
         // Set to 0 so the animation sequence restarts
         sequenceIndex = 0;
         // If this was the last tutorial, replay the tutorials
-        if (tutItemIndex + 1 === tutorials.length) {
-          tutItemIndex = 0;
+        if (tutMoveIndex + 1 === moves.length) {
+          tutMoveIndex = 0;
         }
         // If it wasn't the last tutorial, play the next tutorial
         else {
-          tutItemIndex++;
+          tutMoveIndex++;
         }
         // Reset move and state
         initState();
@@ -93,8 +98,11 @@ export default function Tutorial() {
     };
   }, [selectedTutPiece]);
 
+  /**
+   *
+   */
   let pieces: JSX.Element[] = [];
-  for (let pieceName in tutTypes) {
+  for (let pieceName in pieceTutorials) {
     let width = 60;
     let wrapperDivClass = "";
     if (pieceName === selectedTutPiece) wrapperDivClass = "selected";
@@ -112,12 +120,13 @@ export default function Tutorial() {
 
   let tutContent: JSX.Element;
 
-  if (selectedTutPiece) {
+  // Make sure board is initialised with a state before rendering it
+  if (selectedTutPiece && token !== 0) {
     tutContent = (
       <div className="koth-tutorial-moves">
         <div>
           <h3>{selectedTutPiece}</h3>
-          <div>{tutTypes[selectedTutPiece].desc}</div>
+          <div dangerouslySetInnerHTML={{ __html: pieceTutorials[selectedTutPiece].desc }}></div>
         </div>
         <div>
           <br />
@@ -126,7 +135,7 @@ export default function Tutorial() {
             token={token}
             gameMode="AGAINST_HUMAN"
             playable={false}
-            boardMaxWidth={280}
+            boardMaxWidth={290}
             selectTile={selectTile}
           />
         </div>

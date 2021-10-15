@@ -2,31 +2,31 @@ import { PieceName } from "../../board-logic/piece";
 import { JSONBoardState } from "../../board-logic/board/board-state";
 
 /**
- * Each tutorial item contains a board state and a board move [from, to]
+ * Each tutorial move contains a board state and a board move [from, to]
  *
  */
-type TutItem = {
+type TutMove = {
   state: JSONBoardState;
   move: [string, string];
 };
 
 /**
- * Each 'PieceTutorial' contains a description of a piece
- * and array of Tutorial Items
+ * Each 'PieceTutorial' contains a description of the piece
+ * and array of Tutorial Moves
  */
 type PieceTutorial = {
   desc: string;
-  tutorials: TutItem[];
+  moves: TutMove[];
 };
 
 /**
  * A JS dictionary where the Key is Piece name
  * and value is a 'PieceTutorial'
  */
-export const tutTypes: Record<PieceName, PieceTutorial> = {
+export const pieceTutorials: Record<PieceName, PieceTutorial> = {
   KING: {
     desc: "The king moves 1 Tile in any direction",
-    tutorials: [
+    moves: [
       {
         state: [{ lastMove: null, pieces: [["C3", "WHITE", "KING"]] }],
         move: ["C3", "C4"],
@@ -36,7 +36,7 @@ export const tutTypes: Record<PieceName, PieceTutorial> = {
 
   CHARIOT: {
     desc: "Chariot can move up to 3 tiles Vertically and any number of tiles Horizontally.",
-    tutorials: [
+    moves: [
       {
         state: [{ lastMove: null, pieces: [["A1", "WHITE", "CHARIOT"]] }],
         move: ["A1", "A4"],
@@ -50,7 +50,7 @@ export const tutTypes: Record<PieceName, PieceTutorial> = {
 
   ARCHER: {
     desc: "Archer can move 2 Tiles Diagonally. The Archer can also Leap over other pieces.",
-    tutorials: [
+    moves: [
       {
         state: [
           {
@@ -77,8 +77,12 @@ export const tutTypes: Record<PieceName, PieceTutorial> = {
   },
 
   MAGICIAN: {
-    desc: "Magician can move any number of Tiles in any direction. The Magician cannot capture pieces, howerver it can swap position with firendly and enemy pieces in its line of sight.",
-    tutorials: [
+    desc: `
+      Magician can move any number of Tiles in any direction. 
+      Magician cannot capture pieces, however it can swap position with 
+      firendly and enemy pieces in its <u title="Meaning not obstructed by another piece">line of sight</u>.
+      `,
+    moves: [
       {
         state: [
           {
@@ -107,8 +111,8 @@ export const tutTypes: Record<PieceName, PieceTutorial> = {
   },
 
   SPY: {
-    desc: "Spy moves 1 Tile in any direction. If on the edge of the board, Spy can move 1 Tile from one edge of the board to the oposite edge.",
-    tutorials: [
+    desc: "Spy moves 1 Tile in any direction. If on the edge of the board, Spy can move 1 Tile from one edge of the board to the opposite edge.",
+    moves: [
       { state: [{ lastMove: null, pieces: [["C2", "WHITE", "SPY"]] }], move: ["C2", "C1"] },
       { state: [{ lastMove: null, pieces: [["C1", "WHITE", "SPY"]] }], move: ["C1", "C5"] },
       {
@@ -128,7 +132,7 @@ export const tutTypes: Record<PieceName, PieceTutorial> = {
 
   TOWER: {
     desc: "Tower can move 1 Tile in Horizontal or Vertical direction. The Tower cannot Capture other pieces and also cannot be captured.",
-    tutorials: [
+    moves: [
       {
         state: [
           {

@@ -15,7 +15,7 @@ import blackTower from "./images/black/tower.png";
 import blackArcher from "./images/black/archer.png";
 import blackChariot from "./images/black/chariot.png";
 
-//import goldenKing from "./images/golden-king.png";
+import goldenKing from "./images/golden-king.png";
 
 type PieceImages = {
   [key in Colour]: {
@@ -48,14 +48,19 @@ export interface PieceProps {
   width: number;
   movable?: boolean;
   position?: { x: number; y: number };
+  isGolden?: boolean;
   onPieceDrag?: () => void;
   onPieceClick?: () => void;
 }
 
 export function Piece(opts: PieceProps) {
-  const { name, colour, movable, width, position, onPieceDrag, onPieceClick } = opts;
+  const { name, colour, movable, width, position, isGolden, onPieceDrag, onPieceClick } = opts;
   const mouseDown = useRef(false);
-  const pieceImage = pieceImages[colour][name];
+  let pieceImage = pieceImages[colour][name];
+
+  if (isGolden && name === "KING") {
+    pieceImage = goldenKing;
+  }
 
   /**
    * Firefox image drag fix

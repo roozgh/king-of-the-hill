@@ -6,7 +6,7 @@ import { getMoveCandidates } from "../board-logic/ai/move-finder";
 import { Board } from "../board-logic/board/board";
 import { JSONBoardState } from "../board-logic/board/board-state";
 import { EvaluatorPlugin } from "../board-logic/ai/score-evaluator";
-import MoveSound from "./move.mp3";
+import MoveSound from "./images/move.mp3";
 
 const BoardMemo = memo(BoardView);
 
@@ -182,10 +182,12 @@ export default function BoardPage() {
 
   return (
     <div className="koth-page">
-      <div className={`koth-board-wrapper ${screenSize}`}>
-        <div
-          className={`koth-board ${board.state.player === "WHITE" ? "white-turn" : "black-turn"}`}
-        >
+      <div
+        className={`koth-board-wrapper ${screenSize}  ${
+          board.state.player === "WHITE" ? "white-turn" : "black-turn"
+        }`}
+      >
+        <div className="koth-board">
           <BoardMemo
             board={board}
             token={token}

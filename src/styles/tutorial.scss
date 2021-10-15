@@ -2,8 +2,10 @@
 @use "./vars.scss" as *;
 
 .koth-tutorial {
+  u {
+    cursor: help;
+  }
   .koth-tutorial-top {
-    //height: 80px;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -32,24 +34,9 @@
     display: grid;
     grid-template-columns: 1fr 350px;
     gap: 20px;
-    opacity: 1;
-    animation: slideUp;
-    animation-duration: 0.5s;
     @media only screen and (max-width: 600px) {
       grid-template-columns: 100%;
       gap: 10px;
     }
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0px);
   }
 }

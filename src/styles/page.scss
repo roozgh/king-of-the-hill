@@ -26,13 +26,11 @@ hr {
 }
 
 button {
-  padding: 5px 20px;
+  padding: 10px;
   background: color.adjust($gray, $lightness: -18%);
   color: $gray;
   border: none;
   font-size: 0.9em;
-  border-radius: 5px;
-  margin: 2px;
   &:hover {
     cursor: pointer;
     background-color: color.adjust($gray, $lightness: -22%);

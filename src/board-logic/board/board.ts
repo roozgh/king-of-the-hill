@@ -8,6 +8,7 @@ export interface BoardConfig {
   x: number;
   y: number;
   hills?: string[];
+  totalTurns?: number;
 }
 
 const boardDimentions: { [k: string]: string[] } = {
@@ -16,6 +17,8 @@ const boardDimentions: { [k: string]: string[] } = {
   // Y AXIS - Top to Bottom
   y: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
 };
+
+const defaultTotalTurns = 70;
 
 /**
  *
@@ -26,8 +29,9 @@ export class Board {
   state = new BoardState();
   xAxis: string[];
   yAxis: string[];
+  totalTurns: number;
 
-  constructor({ x, y, hills }: BoardConfig) {
+  constructor({ x, y, hills, totalTurns }: BoardConfig) {
     checkBoardDimentions("x", x);
     checkBoardDimentions("y", y);
     let xAxis = boardDimentions.x.slice(0, x);
@@ -36,6 +40,7 @@ export class Board {
     this.hills = this.getTilesArray().filter((t) => t.isHill);
     this.xAxis = xAxis;
     this.yAxis = yAxis;
+    this.totalTurns = totalTurns || defaultTotalTurns;
   }
 
   /**
@@ -88,7 +93,7 @@ export class Board {
       return;
     }
 
-    if (this.state.totalTurns + 1 === this.state.turn) {
+    if (this.totalTurns + 1 === this.state.turn) {
       this.state.status = "DRAW";
     } else {
       this.state.player = this.state.getNextTurnPlayer();
@@ -138,7 +143,7 @@ export class Board {
         // For edge-case when(for some reason) player Magician moves opponent King into Hill
         if (nextTurnPlayer === piece.colour) return this.state.player;
         // If King move to Hill on last move of the game
-        if (this.state.totalTurns + 1 === this.state.turn) return piece.colour;
+        if (this.totalTurns + 1 === this.state.turn) return piece.colour;
         // Check if possible for player to Contest oponent King on Hill
         let moves = this.getAllPossibleMovesByColour(nextTurnPlayer);
         if (!moves.includes(hill.key)) return this.state.player;

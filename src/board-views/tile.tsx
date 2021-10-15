@@ -161,7 +161,7 @@ export default function Tile(opt: TileProps) {
     }
 
     let movable = false;
-    if (board.state.status === "ACTIVE" && playable) {
+    if (status === "ACTIVE" && playable) {
       if (gameMode === "AGAINST_CPU") {
         // Can only move WHITE pieces & can only do it on WHITE's turn
         if (playerTurn === "WHITE" && piece.colour === "WHITE") {
@@ -175,12 +175,18 @@ export default function Tile(opt: TileProps) {
       }
     }
 
+    let isGolden = false;
+    if (status !== "ACTIVE" && isHill && piece.name === "KING") {
+      isGolden = true;
+    }
+
     pieceElement = (
       <Piece
         name={piece.name}
         colour={piece.colour}
         movable={movable}
         width={pieceWidth}
+        isGolden={isGolden}
         onPieceDrag={onPieceDrag}
         onPieceClick={onPieceClick}
       />

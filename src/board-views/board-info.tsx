@@ -3,6 +3,8 @@ import { Board } from "../board-logic/board/board";
 import { Piece } from "./piece";
 import { Modal } from "../components/modal";
 import Tutorial from "./tutorial/tutorial";
+import questionSvg from "./images/question.svg";
+import restartSvg from "./images/restart.svg";
 
 interface BoardInfoProps {
   board: Board;
@@ -23,33 +25,20 @@ export default function BoardInfo(props: BoardInfoProps) {
   const { board, restart, width, height } = props;
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  let turnInfo = "";
-
-  switch (board.state.status) {
-    case "ACTIVE":
-      turnInfo = `TURN: ${board.state.turn} / ${board.state.totalTurns}`;
-      break;
-    case "DRAW":
-      turnInfo = "Game Drawn";
-      break;
-    case "WHITE":
-      turnInfo = "Blue won!";
-      break;
-    case "BLACK":
-      turnInfo = "Red won!";
-      break;
-    default:
-      throw Error(`Invalid Board Status: ${board.state.status}`);
-  }
-
   return (
     <div className="koth-board-info" style={{ height, width }}>
       <CapturedPieces board={board} colour={"BLACK"} />
       <div>
-        {turnInfo}
+        <TurnInfo board={board} />
         <hr />
-        <button onClick={restart}>RESTART</button>
-        <button onClick={() => setModalIsOpen(true)}>LEARN TO PLAY</button>
+        <div className="koth-btn-controls">
+          <button onClick={restart} title="Restart Game">
+            <img src={restartSvg} alt="Restart Game" width="20" />
+          </button>
+          <button onClick={() => setModalIsOpen(true)} title="Learn How To Play">
+            <img src={questionSvg} alt="How To Play" width="20" />
+          </button>
+        </div>
       </div>
       <CapturedPieces board={board} colour={"WHITE"} />
       <Modal isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)} title="Learn To Play">
@@ -69,4 +58,32 @@ function CapturedPieces(props: CapturedPiecesProp) {
     .map((piece) => <Piece name={piece.name} colour={colour} width={45} />);
 
   return <div className="koth-captured-pieces">{pieces}</div>;
+}
+
+/**
+ *
+ */
+function TurnInfo(props: { board: Board }) {
+  const { board } = props;
+
+  let txt = "";
+
+  switch (board.state.status) {
+    case "ACTIVE":
+      txt = `TURN: ${board.state.turn} / ${board.totalTurns}`;
+      break;
+    case "DRAW":
+      txt = "Game Drawn";
+      break;
+    case "WHITE":
+      txt = "Blue Won!";
+      break;
+    case "BLACK":
+      txt = "Red Won!";
+      break;
+    default:
+      throw Error(`Invalid board Status: ${board.state.status}`);
+  }
+
+  return <div className="koth-turn-info">{txt}</div>;
 }

@@ -27,7 +27,6 @@ type Status = "ACTIVE" | "DRAW" | Colour;
  *
  */
 export class BoardState {
-  readonly totalTurns = 80;
   private stateHistory: State[] = [];
   player: Colour = startingPlayer;
   status: Status = "ACTIVE";

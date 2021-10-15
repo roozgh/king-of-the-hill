@@ -9,7 +9,7 @@ export interface PossibleMove {
   tileTo: Tile;
   tileScore: number;
   capturing?: boolean;
-  // Tile distance from moving piece
+  // Tile distance from Tile containing the moving piece
   distanceFromPiece: number;
 }
 

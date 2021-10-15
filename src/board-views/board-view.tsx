@@ -1,5 +1,5 @@
 import { Piece } from "./piece";
-import { useEffect, useCallback, useReducer, MouseEvent, memo } from "react";
+import { useEffect, useCallback, useReducer, MouseEvent } from "react";
 import { useWindowEvent } from "../utils";
 import Tile from "./tile";
 import { Board } from "../board-logic/board/board";
@@ -12,6 +12,7 @@ interface BoardViewProps {
   token: number | null;
   gameMode: string;
   playable: boolean;
+  // Suggested board width from parent component.
   boardMaxWidth: number;
   selectTile: null | string;
   onPieceMove?: (from: string, to: string) => void;
@@ -23,7 +24,6 @@ interface BoardViewProps {
 export default function BoardView(opt: BoardViewProps) {
   //console.log("RENDER");
   const { board, token, playable, gameMode, boardMaxWidth, selectTile, onPieceMove } = opt;
-  const { totalTurns } = board.state;
   const [state, dispatch] = useReducer(boardViewReducer, boardViewInitialState);
   const { selectedTile, draggedPiece, draggedPieceCoords } = state;
 
@@ -55,9 +55,8 @@ export default function BoardView(opt: BoardViewProps) {
    * Set Board and Tile width
    */
   useEffect(() => {
-    const windowWidth = window.innerWidth;
     const boardColumnCount = board.xAxis.length;
-    let boardWidth = Math.min(windowWidth, boardMaxWidth);
+    let boardWidth = boardMaxWidth;
     let tileWidth = Math.floor(boardWidth / boardColumnCount);
     boardWidth = tileWidth * boardColumnCount;
     dispatch({ type: "BOARD_WIDTH_CHANGE", boardWidth, tileWidth });

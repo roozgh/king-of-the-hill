@@ -2,22 +2,42 @@
 @use "./vars.scss" as *;
 
 .koth-page {
-  background: $gray;
   width: 100%;
   height: 100vh;
   display: flex;
   justify-content: center;
-  margin-top: 100px;
-  //align-items: center;
-}
-
-@media only screen and (max-width: 600px) {
-  .koth-page {
-    margin-top: 0px;
+  align-items: center;
+  @media only screen and (max-width: 600px) {
+    display: block;
   }
 }
 
 .koth-board-wrapper {
+  .koth-board {
+    border: 10px solid color.adjust($gray, $lightness: -15%);
+    border-image-slice: 1;
+    border-left: none;
+    border-right: none;
+  }
+
+  &.white-turn {
+    .koth-board {
+      border-bottom-color: $white-prime;
+    }
+    .koth-turn-info {
+      background-color: $white-prime;
+    }
+  }
+
+  &.black-turn {
+    .koth-board {
+      border-top-color: $black-prime;
+    }
+    .koth-turn-info {
+      background-color: $black-prime;
+    }
+  }
+
   &.lg {
     .koth-board {
       float: left;
@@ -29,31 +49,52 @@
       padding-left: 20px;
       .koth-captured-pieces {
         height: 200px;
-        width: 120px;
-        border-radius: 5px;
-        .piece {
-          margin: 5px;
-        }
       }
     }
   }
   &.sm {
     .koth-board-info {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      margin-top: 15px;
+      display: flex;
+      align-content: space-between;
+      gap: 20px;
     }
   }
 }
 
-.koth-board {
-  border: 10px solid color.adjust($gray, $lightness: -15%);
-  border-image-slice: 1;
-  border-left: none;
-  border-right: none;
-  &.black-turn {
-    border-top-color: $black-prime;
+.koth-board-info {
+  display: grid;
+  grid-template-columns: 100%;
+  div {
+    width: 100%;
   }
-  &.white-turn {
-    border-bottom-color: $white-prime;
+  .koth-captured-pieces {
+    overflow-y: auto;
   }
+  .koth-btn-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    button {
+      padding: 6px;
+    }
+  }
+}
+
+.koth-turn-info {
+  padding: 10px 0px;
+  user-select: none;
+  background-color: color.adjust($gray, $lightness: -15%);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.koth-captured-pieces {
+  padding: 10px 0px;
+  border: dashed 2px color.adjust($gray, $lightness: -15%);
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
 }

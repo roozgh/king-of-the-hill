@@ -1,5 +1,5 @@
-import { useContext, CSSProperties, MouseEvent } from "react";
-import { BoardViewContext } from "./board-view-reducer";
+import { useContext, CSSProperties, MouseEvent, memo, useMemo } from "react";
+import { BoardViewContext } from "./state/board-view-context";
 import { Piece } from "../piece/piece";
 import { Colour, PieceName } from "../../board-logic/piece";
 
@@ -18,7 +18,7 @@ interface TileProps {
   onPieceMove?: (from: string, to: string) => void;
 }
 
-export default function Tile(opt: TileProps) {
+export const Tile = memo((props: TileProps) => {
   //console.log("TILE RENDER");
   const {
     playerTurn,
@@ -32,9 +32,9 @@ export default function Tile(opt: TileProps) {
     distanceFromPiece,
     playable,
     onPieceMove,
-  } = opt;
+  } = props;
 
-  const [state, dispatch] = useContext(BoardViewContext);
+  const { state, dispatch } = useContext(BoardViewContext);
   const { board, draggedPiece, selectedTile, possibleMoves, gameMode, tileWidth, boardWidth } =
     state;
   if (!board) throw Error("Board not defined");
@@ -201,4 +201,4 @@ export default function Tile(opt: TileProps) {
       {highlightHtml}
     </div>
   );
-}
+});

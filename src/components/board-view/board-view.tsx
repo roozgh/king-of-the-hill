@@ -1,9 +1,11 @@
+import { useEffect, useCallback, useReducer, useState, useMemo } from "react";
 import { Piece } from "../piece/piece";
-import { useEffect, useCallback, useReducer } from "react";
 import { useWindowEvent } from "../../utils";
-import Tile from "./tile";
 import { Board } from "../../board-logic/board/board";
-import { boardViewReducer, boardViewInitialState, BoardViewContext } from "./board-view-reducer";
+import { boardViewInitialState } from "./state/board-view-state";
+import { boardViewReducer } from "./state/board-view-reducer";
+import { BoardViewContext } from "./state/board-view-context";
+import { BoardTiles } from "./board-tiles";
 
 interface BoardViewProps {
   board: Board;
@@ -18,6 +20,8 @@ interface BoardViewProps {
   onPieceMove?: (from: string, to: string) => void;
 }
 
+type draggedPieceCoords = null | { x: number; y: number };
+
 /**
  *
  */
@@ -25,7 +29,14 @@ export default function BoardView(opt: BoardViewProps) {
   //console.log("RENDER");
   const { board, token, playable, gameMode, boardMaxWidth, selectTile, onPieceMove } = opt;
   const [state, dispatch] = useReducer(boardViewReducer, boardViewInitialState);
-  const { selectedTile, draggedPiece, draggedPieceCoords } = state;
+  const { selectedTile, draggedPiece } = state;
+  // Why is 'draggedPieceCoords' not part of the Reducer?
+  // To stop board tiles re-rendering everytime we render the dragged piece
+  const [draggedPieceCoords, setDraggedPieceCoords] = useState<draggedPieceCoords>(null);
+
+  const contextValue = useMemo(() => {
+    return { state, dispatch };
+  }, [state]);
 
   /**
    * Initialise Board
@@ -77,67 +88,27 @@ export default function BoardView(opt: BoardViewProps) {
    * Check if piece drag has started,
    * set dragged piece x, y coordinates equal to mouse x, y.
    */
-
   useEffect(() => {
     if (!draggedPiece) return;
+    // When drag starts set inital values.
+    const { x, y } = draggedPiece.initialCoords;
+    setDraggedPieceCoords({ x, y });
+
     const onWindowMouseMove = (e: MouseEvent) => {
       const x = e.clientX;
       const y = e.clientY;
-      dispatch({ type: "PIECE_DRAG_CONTINUE", x, y });
+      setDraggedPieceCoords({ x, y });
     };
     window.addEventListener("mousemove", onWindowMouseMove);
     // Event Listener Clean-up
     return () => {
+      setDraggedPieceCoords(null);
       window.removeEventListener("mousemove", onWindowMouseMove);
     };
   }, [draggedPiece]);
 
-  /**
-   * Returns an Array of <div class="row"> Elements
-   * that contain a row of Tiles
-   */
-  const boardRowsHtml = state.tiles.map((tileRows, i) => {
-    const rowHtml = tileRows.map((tileRow) => {
-      const {
-        playerTurn,
-        key,
-        colour,
-        piece,
-        isPossibleMove,
-        isMovingPiece,
-        isHill,
-        edgeScore,
-        distanceFromPiece,
-        isPreviousMove,
-      } = tileRow;
-
-      return (
-        <Tile
-          playerTurn={playerTurn}
-          key={key}
-          colour={colour}
-          tileKey={key}
-          isHill={isHill}
-          isPossibleMove={isPossibleMove}
-          edgeScore={edgeScore}
-          isMovingPiece={isMovingPiece}
-          piece={piece}
-          distanceFromPiece={distanceFromPiece}
-          isPrevMove={isPreviousMove}
-          playable={playable}
-          onPieceMove={onPieceMove}
-        />
-      );
-    });
-
-    return (
-      <div className="row" key={i}>
-        {rowHtml}
-      </div>
-    );
-  });
   return (
-    <BoardViewContext.Provider value={[state, dispatch]}>
+    <>
       {draggedPiece && draggedPieceCoords && (
         <Piece
           name={draggedPiece.name}
@@ -146,12 +117,14 @@ export default function BoardView(opt: BoardViewProps) {
           position={{ x: draggedPieceCoords.x, y: draggedPieceCoords.y }}
         />
       )}
-      <div
-        className={`board-inner ${selectedTile ? "drag" : ""}`}
-        style={{ width: state.boardWidth, height: state.boardWidth }}
-      >
-        {boardRowsHtml}
-      </div>
-    </BoardViewContext.Provider>
+      <BoardViewContext.Provider value={contextValue}>
+        <div
+          className={`board-inner ${selectedTile ? "drag" : ""}`}
+          style={{ width: state.boardWidth, height: state.boardWidth }}
+        >
+          <BoardTiles tiles={state.tiles} playable={playable} onPieceMove={onPieceMove} />
+        </div>
+      </BoardViewContext.Provider>
+    </>
   );
 }

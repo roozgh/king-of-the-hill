@@ -42,7 +42,7 @@
     .koth-board {
       border-bottom-color: $white-prime;
     }
-    .koth-turn-info {
+    .koth-game-status {
       background-color: $white-prime;
     }
   }
@@ -51,7 +51,7 @@
     .koth-board {
       border-top-color: $black-prime;
     }
-    .koth-turn-info {
+    .koth-game-status {
       background-color: $black-prime;
     }
   }
@@ -100,7 +100,7 @@
   }
 }
 
-.koth-turn-info {
+.koth-game-status {
   padding: 10px 0px;
   user-select: none;
   background-color: color.adjust($gray, $lightness: -15%);

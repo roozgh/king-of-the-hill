@@ -29,7 +29,7 @@ export default function BoardInfo(props: BoardInfoProps) {
     <div className="koth-board-info" style={{ height, width }}>
       <CapturedPieces board={board} colour={"BLACK"} />
       <div>
-        <TurnInfo board={board} />
+        <GameStatus board={board} />
         <hr />
         <div className="koth-btn-controls">
           <button onClick={restart} title="Restart Game">
@@ -61,9 +61,9 @@ function CapturedPieces(props: CapturedPiecesProp) {
 }
 
 /**
- *
+ * Display game status
  */
-function TurnInfo(props: { board: Board }) {
+function GameStatus(props: { board: Board }) {
   const { board } = props;
 
   let txt = "";
@@ -85,5 +85,5 @@ function TurnInfo(props: { board: Board }) {
       throw Error(`Invalid board Status: ${board.state.status}`);
   }
 
-  return <div className="koth-turn-info">{txt}</div>;
+  return <div className="koth-game-status">{txt}</div>;
 }

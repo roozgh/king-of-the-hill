@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 /**
  *
@@ -26,4 +26,25 @@ export function getWindowInnerWidth() {
     widths.push(window.screen?.width);
   }
   return Math.min(widths[0], widths[1]);
+}
+
+/**
+ * For detecting compoenent prop changes
+ * Usefull for optimisation
+ */
+export function useTraceUpdate(props: any) {
+  const prev = useRef(props);
+  useEffect(() => {
+    const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
+      if (prev.current[k] !== v) {
+        ps[k] = [prev.current[k], v];
+      }
+      return ps;
+    }, Object.create(null));
+
+    if (Object.keys(changedProps).length > 0) {
+      console.log("Changed Props:", changedProps);
+    }
+    prev.current = props;
+  });
 }

@@ -1,54 +1,8 @@
-import { createContext, Dispatch } from "react";
-import { Board } from "../../board-logic/board/board";
-import { Colour as PieceColour, PieceName } from "../../board-logic/piece";
-import { getPossibleMovesWithDetails, PossibleMove } from "../../board-logic/possible-moves";
-
-interface FormatedTile {
-  playerTurn: PieceColour;
-  key: string;
-  colour: string;
-  piece: {
-    name: PieceName;
-    colour: PieceColour;
-  } | null;
-  isHill: boolean;
-  isPossibleMove: boolean;
-  isMovingPiece: boolean;
-  isPreviousMove: boolean;
-  edgeScore: string;
-  distanceFromPiece: number | null;
-}
-
-export interface BoardViewState {
-  board: Board | null;
-  tiles: FormatedTile[][];
-  selectedTile: string | null;
-  possibleMoves: string[] | null;
-  tileWidth: number;
-  boardWidth: number;
-  gameMode: string;
-  draggedPiece: null | {
-    colour: PieceColour;
-    name: PieceName;
-    tile: string;
-  };
-  draggedPieceCoords: null | {
-    x: number;
-    y: number;
-  };
-}
-
-export const boardViewInitialState: BoardViewState = {
-  board: null,
-  selectedTile: null,
-  tiles: [],
-  possibleMoves: null,
-  gameMode: "AGAINST_CPU",
-  tileWidth: 90,
-  boardWidth: 750,
-  draggedPiece: null,
-  draggedPieceCoords: null,
-};
+import { Board } from "../../../board-logic/board/board";
+import { Colour as PieceColour, PieceName } from "../../../board-logic/piece";
+import { getPossibleMovesWithDetails, PossibleMove } from "../../../board-logic/possible-moves";
+import { BoardViewState, FormatedTile } from "./board-view-state";
+import { boardViewInitialState } from "./board-view-state";
 
 export type BoardViewAction =
   | { type: "INIT"; board: Board; gameMode: string }
@@ -64,13 +18,8 @@ export type BoardViewAction =
       mouseX: number;
       mouseY: number;
     }
-  | { type: "PIECE_DRAG_CONTINUE"; x: number; y: number }
   | { type: "PIECE_DRAG_STOP" }
   | { type: "NO_TILE_SELECTED" };
-
-type TBoardViewContext = [BoardViewState, Dispatch<BoardViewAction>];
-
-export const BoardViewContext = createContext<TBoardViewContext>([boardViewInitialState, () => {}]);
 
 /**
  *
@@ -92,7 +41,6 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
         tiles,
         selectedTile: null,
         draggedPiece: null,
-        draggedPieceCoords: null,
       };
     }
 
@@ -102,33 +50,26 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
     }
 
     case "PIECE_DRAG": {
-      console.log(0);
       const { tile, colour, name, mouseX, mouseY } = action;
       if (!state.board) throw Error("Board not set");
       const possibleMovesWithDetails = getPossibleMovesWithDetails(tile, state.board);
       const possibleMoves = possibleMovesWithDetails.map((m) => m.tileTo.key);
       const tiles = formatTiles(state.board, possibleMovesWithDetails, tile, tile);
-      const draggedPiece = { tile, colour, name };
-      const draggedPieceCoords = { x: mouseX, y: mouseY };
+      const initialCoords = { x: mouseX, y: mouseY };
+      const draggedPiece = { tile, colour, name, initialCoords };
       return {
         ...state,
         tiles,
         possibleMoves,
         draggedPiece,
-        draggedPieceCoords,
         selectedTile: tile,
       };
-    }
-
-    case "PIECE_DRAG_CONTINUE": {
-      const { x, y } = action;
-      return { ...state, draggedPieceCoords: { x, y } };
     }
 
     case "PIECE_DRAG_STOP": {
       if (!state.board) throw Error("Board not set");
       const tiles = formatTiles(state.board);
-      return { ...state, tiles, draggedPiece: null, draggedPieceCoords: null };
+      return { ...state, tiles, draggedPiece: null };
     }
 
     case "TILE_SELECT": {
@@ -149,7 +90,6 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
         possibleMoves: null,
         selectedTile: null,
         draggedPiece: null,
-        draggedPieceCoords: null,
       };
     }
 

@@ -35,13 +35,13 @@ export default function BoardInfo(props: BoardInfoProps) {
           <button onClick={restart} title="Restart Game">
             <img src={restartSvg} alt="Restart Game" width="20" />
           </button>
-          <button onClick={() => setModalIsOpen(true)} title="Learn How To Play">
+          <button onClick={() => setModalIsOpen(true)} className="attention" title="How To Play">
             <img src={questionSvg} alt="How To Play" width="20" />
           </button>
         </div>
       </div>
       <CapturedPieces board={board} colour={"WHITE"} />
-      <Modal isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)} title="Learn To Play">
+      <Modal isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)} title="HOW TO PLAY">
         <Tutorial />
       </Modal>
     </div>

@@ -7,6 +7,7 @@ import { Board } from "../board-logic/board/board";
 import { JSONBoardState } from "../board-logic/board/board-state";
 import { EvaluatorPlugin } from "../board-logic/ai/score-evaluator";
 import MoveSound from "./assets/move.mp3";
+import githubSvg from "./assets/github.svg";
 
 const BoardMemo = memo(BoardView);
 
@@ -181,29 +182,40 @@ export default function BoardPage() {
   }
 
   return (
-    <div className="koth-page">
-      <div
-        className={`koth-board-wrapper ${screenSize}  ${
-          board.state.player === "WHITE" ? "white-turn" : "black-turn"
-        }`}
-      >
-        <div className="koth-board">
-          <BoardMemo
+    <div>
+      <div className="koth-page-header">
+        <div className="koth-logo"></div>
+        <a
+          href="https://github.com/roozgh/king-of-the-hill"
+          style={{ float: "right", marginRight: "25px" }}
+        >
+          <img src={githubSvg} alt="Restart Game" width="30" />
+        </a>
+      </div>
+      <div className="koth-page">
+        <div
+          className={`koth-board-wrapper ${screenSize}  ${
+            board.state.player === "WHITE" ? "white-turn" : "black-turn"
+          }`}
+        >
+          <div className="koth-board">
+            <BoardMemo
+              board={board}
+              token={token}
+              gameMode={gameMode}
+              playable={playable}
+              boardMaxWidth={boardWidth}
+              selectTile={selectTile}
+              onPieceMove={onPieceMove}
+            />
+          </div>
+          <BoardInfo
             board={board}
-            token={token}
-            gameMode={gameMode}
-            playable={playable}
-            boardMaxWidth={boardWidth}
-            selectTile={selectTile}
-            onPieceMove={onPieceMove}
+            restart={onRestart}
+            height={boardInfoSize.h}
+            width={boardInfoSize.w}
           />
         </div>
-        <BoardInfo
-          board={board}
-          restart={onRestart}
-          height={boardInfoSize.h}
-          width={boardInfoSize.w}
-        />
       </div>
     </div>
   );

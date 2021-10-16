@@ -3,12 +3,30 @@
 
 .koth-page {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   @media only screen and (max-width: 600px) {
     display: block;
+  }
+}
+
+.koth-page-header {
+  width: 100%;
+  height: 25px;
+  //display: flex;
+  //justify-content: flex-end;
+  //align-items: center;
+  padding: 15px 0px;
+  //background-color: color.adjust($gray, $lightness: -12%);
+  @media only screen and (max-width: 600px) {
+    display: none;
+  }
+  .koth-logo {
+    float: left;
+    font-weight: bold;
+    color: #fff;
   }
 }
 
@@ -39,6 +57,7 @@
   }
 
   &.lg {
+    margin-top: 80px;
     .koth-board {
       float: left;
     }
@@ -97,4 +116,33 @@
   display: flex;
   justify-content: space-evenly;
   flex-wrap: wrap;
+}
+
+.attention {
+  animation: shake 0.5s;
+  animation-delay: 1.5s;
+  animation-iteration-count: 2;
+}
+
+@keyframes shake {
+  0% {
+    transform: translate(1px, 1px) rotate(5deg);
+  }
+  25% {
+    transform: translate(-1px, 0px) rotate(15deg) scale(1.3);
+    background-color: $white-prime;
+  }
+
+  50% {
+    transform: translate(-1px, 2px) rotate(-15deg) scale(0.7);
+    background-color: $white-prime;
+  }
+
+  75% {
+    transform: translate(3px, 1px) rotate(15deg) scale(1.2);
+  }
+
+  100% {
+    transform: translate(1px, -2px) rotate(-5deg);
+  }
 }

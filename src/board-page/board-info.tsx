@@ -55,7 +55,7 @@ function CapturedPieces(props: CapturedPiecesProp) {
   const capturedPieces = board.state.getCapturedPieces();
   const pieces = capturedPieces
     .filter((piece) => colour === piece.colour)
-    .map((piece) => <Piece name={piece.name} colour={colour} width={45} />);
+    .map((piece) => <Piece name={piece.name} colour={colour} key={piece.id} width={45} />);
 
   return <div className="koth-captured-pieces">{pieces}</div>;
 }
@@ -65,9 +65,7 @@ function CapturedPieces(props: CapturedPiecesProp) {
  */
 function GameStatus(props: { board: Board }) {
   const { board } = props;
-
   let txt = "";
-
   switch (board.state.status) {
     case "ACTIVE":
       txt = `TURN: ${board.state.turn} / ${board.totalTurns}`;

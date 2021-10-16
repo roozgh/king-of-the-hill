@@ -1,7 +1,9 @@
-import { useState, useEffect, ReactNode } from "react";
+import { ReactNode } from "react";
 import ReactModal from "react-modal";
 
-ReactModal.setAppElement("#root");
+if (process.env.NODE_ENV !== "test") {
+  ReactModal.setAppElement("#root");
+}
 
 interface ModalProp {
   isOpen: boolean;

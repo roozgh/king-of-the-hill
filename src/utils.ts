@@ -25,7 +25,7 @@ export function getWindowInnerWidth() {
   if (window.screen?.width) {
     widths.push(window.screen?.width);
   }
-  return Math.min(widths[0], widths[1]);
+  return Math.min(...widths);
 }
 
 /**

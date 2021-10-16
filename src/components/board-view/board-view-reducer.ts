@@ -27,7 +27,6 @@ export interface BoardViewState {
   tileWidth: number;
   boardWidth: number;
   gameMode: string;
-  draging: boolean;
   draggedPiece: null | {
     colour: PieceColour;
     name: PieceName;
@@ -47,7 +46,6 @@ export const boardViewInitialState: BoardViewState = {
   gameMode: "AGAINST_CPU",
   tileWidth: 90,
   boardWidth: 750,
-  draging: false,
   draggedPiece: null,
   draggedPieceCoords: null,
 };
@@ -57,7 +55,15 @@ export type BoardViewAction =
   | { type: "NEW_TURN" }
   | { type: "BOARD_WIDTH_CHANGE"; boardWidth: number; tileWidth: number }
   | { type: "TILE_SELECT"; tile: string }
-  | { type: "PIECE_DRAG"; tile: string; colour: PieceColour; name: PieceName }
+  | {
+      type: "PIECE_DRAG";
+      tile: string;
+      colour: PieceColour;
+      name: PieceName;
+      // Mouse position X, Y positions when piece drag starts
+      mouseX: number;
+      mouseY: number;
+    }
   | { type: "PIECE_DRAG_CONTINUE"; x: number; y: number }
   | { type: "PIECE_DRAG_STOP" }
   | { type: "NO_TILE_SELECTED" };
@@ -85,7 +91,6 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
         ...state,
         tiles,
         selectedTile: null,
-        draging: false,
         draggedPiece: null,
         draggedPieceCoords: null,
       };
@@ -97,13 +102,22 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
     }
 
     case "PIECE_DRAG": {
-      const { tile, colour, name } = action;
+      console.log(0);
+      const { tile, colour, name, mouseX, mouseY } = action;
       if (!state.board) throw Error("Board not set");
       const possibleMovesWithDetails = getPossibleMovesWithDetails(tile, state.board);
       const possibleMoves = possibleMovesWithDetails.map((m) => m.tileTo.key);
       const tiles = formatTiles(state.board, possibleMovesWithDetails, tile, tile);
       const draggedPiece = { tile, colour, name };
-      return { ...state, tiles, possibleMoves, draggedPiece, draging: true, selectedTile: tile };
+      const draggedPieceCoords = { x: mouseX, y: mouseY };
+      return {
+        ...state,
+        tiles,
+        possibleMoves,
+        draggedPiece,
+        draggedPieceCoords,
+        selectedTile: tile,
+      };
     }
 
     case "PIECE_DRAG_CONTINUE": {
@@ -136,7 +150,6 @@ export function boardViewReducer(state: BoardViewState, action: BoardViewAction)
         selectedTile: null,
         draggedPiece: null,
         draggedPieceCoords: null,
-        draging: false,
       };
     }
 

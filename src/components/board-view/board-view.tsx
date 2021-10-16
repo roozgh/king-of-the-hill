@@ -1,5 +1,5 @@
 import { Piece } from "../piece/piece";
-import { useEffect, useCallback, useReducer, MouseEvent } from "react";
+import { useEffect, useCallback, useReducer } from "react";
 import { useWindowEvent } from "../../utils";
 import Tile from "./tile";
 import { Board } from "../../board-logic/board/board";
@@ -74,22 +74,23 @@ export default function BoardView(opt: BoardViewProps) {
   useWindowEvent("mouseup", onWindowMouseUp);
 
   /**
-   * On Window mouse
-   * check if piece was dragged. Then re-render board with
-   * new dragged piece x, y coordinates equal to mouse x, y.
+   * Check if piece drag has started,
+   * set dragged piece x, y coordinates equal to mouse x, y.
    */
-  const onWindowMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (draggedPiece) {
-        const x = e.clientX;
-        const y = e.clientY;
-        dispatch({ type: "PIECE_DRAG_CONTINUE", x, y });
-      }
-    },
-    [draggedPiece]
-  );
 
-  useWindowEvent("mousemove", onWindowMouseMove);
+  useEffect(() => {
+    if (!draggedPiece) return;
+    const onWindowMouseMove = (e: MouseEvent) => {
+      const x = e.clientX;
+      const y = e.clientY;
+      dispatch({ type: "PIECE_DRAG_CONTINUE", x, y });
+    };
+    window.addEventListener("mousemove", onWindowMouseMove);
+    // Event Listener Clean-up
+    return () => {
+      window.removeEventListener("mousemove", onWindowMouseMove);
+    };
+  }, [draggedPiece]);
 
   /**
    * Returns an Array of <div class="row"> Elements

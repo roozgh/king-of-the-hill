@@ -49,7 +49,7 @@ export interface PieceProps {
   movable?: boolean;
   position?: { x: number; y: number };
   isGolden?: boolean;
-  onPieceDrag?: () => void;
+  onPieceDrag?: (e: MouseEvent) => void;
   onPieceClick?: () => void;
 }
 
@@ -92,7 +92,7 @@ export function Piece(opts: PieceProps) {
   function onMouseMove(e: MouseEvent) {
     if (!onPieceDrag) return;
     if (mouseDown.current) {
-      onPieceDrag();
+      onPieceDrag(e);
     }
   }
 

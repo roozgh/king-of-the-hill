@@ -64,10 +64,12 @@ export default function Tile(opt: TileProps) {
   /**
    *
    */
-  function onPieceDrag() {
+  function onPieceDrag(e: MouseEvent) {
     if (!piece) return;
     const { name, colour } = piece;
-    dispatch({ type: "PIECE_DRAG", name, colour, tile: tileKey });
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+    dispatch({ type: "PIECE_DRAG", name, colour, tile: tileKey, mouseX, mouseY });
   }
 
   /**

@@ -25,6 +25,7 @@ const defaultTotalTurns = 70;
  */
 export class Board {
   tiles: Map<string, Tile>;
+  // Hills is an array becuase it's possible for board to have more than 1 hill
   hills: Tile[];
   state = new BoardState();
   xAxis: string[];

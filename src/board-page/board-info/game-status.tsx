@@ -1,14 +1,36 @@
-import { Board } from "../../board-logic/board/board";
+import { useRef, memo, useEffect } from "react";
+
+interface GameStatusProps {
+  status: string;
+  turn: number;
+  totalTurns: number;
+}
 
 /**
  * Display game status
  */
-export function GameStatus(props: { board: Board }) {
-  const { board } = props;
+export const GameStatus = memo((props: GameStatusProps) => {
+  const { status, turn, totalTurns } = props;
+  const statusElm = useRef<HTMLDivElement | null>(null);
+
+  /**
+   * Do a little bouncing animation when game ends
+   */
+  useEffect(() => {
+    if (status !== "ACTIVE") {
+      const elm = statusElm.current;
+      if (!elm) return;
+      elm.classList.remove("bounce");
+      // JS trick to force browser to animate
+      void elm.offsetWidth;
+      elm.classList.add("bounce");
+    }
+  }, [status]);
+
   let txt = "";
-  switch (board.state.status) {
+  switch (status) {
     case "ACTIVE":
-      txt = `TURN: ${board.state.turn} / ${board.totalTurns}`;
+      txt = `TURN: ${turn} / ${totalTurns}`;
       break;
     case "DRAW":
       txt = "Game Drawn";
@@ -20,8 +42,12 @@ export function GameStatus(props: { board: Board }) {
       txt = "Red Won!";
       break;
     default:
-      throw Error(`Invalid board Status: ${board.state.status}`);
+      throw Error(`Invalid board Status: ${status}`);
   }
 
-  return <div className="koth-game-status">{txt}</div>;
-}
+  return (
+    <div ref={statusElm} className="koth-game-status">
+      {txt}
+    </div>
+  );
+});

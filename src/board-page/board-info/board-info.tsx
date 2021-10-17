@@ -41,6 +41,7 @@ export default function BoardInfo(props: BoardInfoProps) {
       console.log(count);
       if (!btn) return;
       btn.classList.remove("attention");
+      // JS trick to force browser to animate
       void btn.offsetWidth;
       btn.classList.add("attention");
       count++;
@@ -57,7 +58,7 @@ export default function BoardInfo(props: BoardInfoProps) {
     if (screenSize === "lg") {
       setPieceWidth(50);
     } else {
-      setPieceWidth(40);
+      setPieceWidth(32);
     }
   }, [screenSize]);
 
@@ -75,7 +76,11 @@ export default function BoardInfo(props: BoardInfoProps) {
     <div className="koth-board-info" style={{ height, width }}>
       <CapturedPieces board={board} colour={"BLACK"} pieceWidth={pieceWidth} />
       <div>
-        <GameStatus board={board} />
+        <GameStatus
+          status={board.state.status}
+          turn={board.state.turn}
+          totalTurns={board.totalTurns}
+        />
         <hr />
         <div className="koth-btn-controls">
           <button onClick={restart} title="Restart Game">

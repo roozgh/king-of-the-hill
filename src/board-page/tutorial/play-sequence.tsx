@@ -61,7 +61,7 @@ export function playSequence(
   ];
 
   // Play each sequence after a 2 sec delay
-  const intervalId = window.setInterval(() => {
+  const intervalId = setInterval(() => {
     simulatePlaySequences[sequenceIndex]();
   }, 1700);
 

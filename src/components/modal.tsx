@@ -7,16 +7,17 @@ if (process.env.NODE_ENV !== "test") {
 
 interface ModalProp {
   isOpen: boolean;
-  onClose: () => void;
   title?: string;
   children: ReactNode;
+  onClose: () => void;
+  onAfterOpen?: () => void;
 }
 
 /**
  *
  */
 export function Modal(props: ModalProp) {
-  const { isOpen, onClose, title, children } = props;
+  const { isOpen, title, onClose, onAfterOpen, children } = props;
 
   return (
     <ReactModal
@@ -27,6 +28,7 @@ export function Modal(props: ModalProp) {
       className="modal"
       overlayClassName="modal-overlay"
       contentLabel="Modal"
+      onAfterOpen={onAfterOpen}
     >
       <button className="modal-close" onClick={onClose}>
         X

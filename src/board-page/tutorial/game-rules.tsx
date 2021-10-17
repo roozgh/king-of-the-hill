@@ -12,7 +12,7 @@ export function GameRules(props: { totalTurns: number }) {
         </li>
         <li>
           Move your King to the{" "}
-          <u title="Hill is the golden tile in the middle of the board">Hill</u> Tile
+          <u title="Hill is the golden tile in the middle of the board">Hill</u> Tile&nbsp;
           <u title="Cannot be captured or moved on next turn">Uncontested</u>. Uncontested means it
           cannot be captured or moved by the opponent on next turn.
         </li>

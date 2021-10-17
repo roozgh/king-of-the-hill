@@ -138,13 +138,13 @@ export class Board {
       if (!piece) continue;
 
       if (piece.name === "KING") {
-        // If player failed to capture oponent King on Hill
+        // If player failed to capture opponent King on Hill
         if (this.state.player !== piece.colour) return piece.colour;
         // For edge-case when(for some reason) player Magician moves opponent King into Hill
         if (nextTurnPlayer === piece.colour) return this.state.player;
         // If King move to Hill on last move of the game
         if (this.totalTurns + 1 === this.state.turn) return piece.colour;
-        // Check if possible for player to Contest oponent King on Hill
+        // Check if possible for player to Contest opponent King on Hill
         let moves = this.getAllPossibleMovesByColour(nextTurnPlayer);
         if (!moves.includes(hill.key)) return this.state.player;
       }

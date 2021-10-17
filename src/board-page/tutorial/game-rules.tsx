@@ -8,11 +8,11 @@ export function GameRules(props: { totalTurns: number }) {
       <br />
       <ol>
         <li>
-          <u title="Take an oponent piece with your piece">Capture</u> the oponent King.
+          <u title="Take an opponent piece with your piece">Capture</u> the opponent King.
         </li>
         <li>
           Move your King to the{" "}
-          <u title="Hill is the golden tile in the middle of the board">Hill</u> Tile&nbsp;
+          <u title="Hill is the golden coloured Tile in the middle of the board">Hill</u> Tile&nbsp;
           <u title="Cannot be captured or moved on next turn">Uncontested</u>. Uncontested means it
           cannot be captured or moved by the opponent on next turn.
         </li>

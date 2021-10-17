@@ -1,7 +1,7 @@
 {
-  "name": "react-test",
-  "version": "0.1.0",
-  "private": true,
+  "name": "king-of-the-hill",
+  "version": "1.0.0",
+  "description": "A strategy board game similar to Chess.",
   "homepage": "https://roozgh.github.io/king-of-the-hill",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.9",

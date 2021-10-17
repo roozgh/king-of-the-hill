@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/king-of-the-hill/static/css/main.85de2df1.chunk.css",
-    "main.js": "/king-of-the-hill/static/js/main.86c5a2ac.chunk.js",
-    "main.js.map": "/king-of-the-hill/static/js/main.86c5a2ac.chunk.js.map",
+    "main.css": "/king-of-the-hill/static/css/main.96b77dc6.chunk.css",
+    "main.js": "/king-of-the-hill/static/js/main.a846839b.chunk.js",
+    "main.js.map": "/king-of-the-hill/static/js/main.a846839b.chunk.js.map",
     "runtime-main.js": "/king-of-the-hill/static/js/runtime-main.c05f7f32.js",
     "runtime-main.js.map": "/king-of-the-hill/static/js/runtime-main.c05f7f32.js.map",
     "static/js/2.7990a07c.chunk.js": "/king-of-the-hill/static/js/2.7990a07c.chunk.js",
@@ -10,9 +10,9 @@
     "static/js/3.0c85b5ba.chunk.js": "/king-of-the-hill/static/js/3.0c85b5ba.chunk.js",
     "static/js/3.0c85b5ba.chunk.js.map": "/king-of-the-hill/static/js/3.0c85b5ba.chunk.js.map",
     "index.html": "/king-of-the-hill/index.html",
-    "static/css/main.85de2df1.chunk.css.map": "/king-of-the-hill/static/css/main.85de2df1.chunk.css.map",
+    "static/css/main.96b77dc6.chunk.css.map": "/king-of-the-hill/static/css/main.96b77dc6.chunk.css.map",
     "static/js/2.7990a07c.chunk.js.LICENSE.txt": "/king-of-the-hill/static/js/2.7990a07c.chunk.js.LICENSE.txt",
-    "static/media/github.63c6aab9.svg": "/king-of-the-hill/static/media/github.63c6aab9.svg",
+    "static/media/github.5deca76a.svg": "/king-of-the-hill/static/media/github.5deca76a.svg",
     "static/media/move.e26d185c.mp3": "/king-of-the-hill/static/media/move.e26d185c.mp3",
     "static/media/question.b9c5d800.svg": "/king-of-the-hill/static/media/question.b9c5d800.svg",
     "static/media/restart.b67589ae.svg": "/king-of-the-hill/static/media/restart.b67589ae.svg"
@@ -20,7 +20,7 @@
   "entrypoints": [
     "static/js/runtime-main.c05f7f32.js",
     "static/js/2.7990a07c.chunk.js",
-    "static/css/main.85de2df1.chunk.css",
-    "static/js/main.86c5a2ac.chunk.js"
+    "static/css/main.96b77dc6.chunk.css",
+    "static/js/main.a846839b.chunk.js"
   ]
 }

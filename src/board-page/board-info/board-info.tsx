@@ -12,6 +12,7 @@ interface BoardInfoProps {
   restart: () => void;
   width: number;
   height: number;
+  screenSize: string;
 }
 
 const tutDoneKey = "koth-done-tutorial";
@@ -20,8 +21,9 @@ const tutDoneKey = "koth-done-tutorial";
  *
  */
 export default function BoardInfo(props: BoardInfoProps) {
-  const { board, restart, width, height } = props;
+  const { board, restart, width, height, screenSize } = props;
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [pieceWidth, setPieceWidth] = useState(50);
   const tutorialBtn = useRef<HTMLButtonElement>(null);
 
   /**
@@ -51,6 +53,17 @@ export default function BoardInfo(props: BoardInfoProps) {
   /**
    *
    */
+  useEffect(() => {
+    if (screenSize === "lg") {
+      setPieceWidth(50);
+    } else {
+      setPieceWidth(40);
+    }
+  }, [screenSize]);
+
+  /**
+   *
+   */
   function onAfterOpen() {
     const doneTutorial = localStorage.getItem(tutDoneKey);
     if (!doneTutorial) {
@@ -60,7 +73,7 @@ export default function BoardInfo(props: BoardInfoProps) {
 
   return (
     <div className="koth-board-info" style={{ height, width }}>
-      <CapturedPieces board={board} colour={"BLACK"} />
+      <CapturedPieces board={board} colour={"BLACK"} pieceWidth={pieceWidth} />
       <div>
         <GameStatus board={board} />
         <hr />
@@ -73,14 +86,14 @@ export default function BoardInfo(props: BoardInfoProps) {
           </button>
         </div>
       </div>
-      <CapturedPieces board={board} colour={"WHITE"} />
+      <CapturedPieces board={board} colour={"WHITE"} pieceWidth={pieceWidth} />
       <Modal
         isOpen={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
         onAfterOpen={onAfterOpen}
         title="HOW TO PLAY"
       >
-        <Tutorial />
+        <Tutorial screenSize={screenSize} />
       </Modal>
     </div>
   );

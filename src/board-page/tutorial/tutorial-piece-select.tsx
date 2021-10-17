@@ -4,6 +4,7 @@ import { Piece } from "../../components/piece/piece";
 
 interface TutorialPieceSelectProps {
   selectedPiece: PieceName | null;
+  pieceWidth: number;
   onPieceClick: (name: PieceName) => void;
 }
 
@@ -11,10 +12,9 @@ interface TutorialPieceSelectProps {
  *
  */
 export function TutorialPieceSelect(props: TutorialPieceSelectProps) {
-  const { selectedPiece, onPieceClick } = props;
+  const { selectedPiece, pieceWidth, onPieceClick } = props;
   let pieces: JSX.Element[] = [];
   for (let pieceName in pieceTutorials) {
-    let width = 60;
     let wrapperDivClass = "";
     if (pieceName === selectedPiece) wrapperDivClass = "selected";
     pieces.push(
@@ -24,7 +24,7 @@ export function TutorialPieceSelect(props: TutorialPieceSelectProps) {
         title={pieceName}
         onClick={() => onPieceClick(pieceName as PieceName)}
       >
-        <Piece name={pieceName as PieceName} colour={"WHITE"} width={width} />
+        <Piece name={pieceName as PieceName} colour={"WHITE"} width={pieceWidth} />
       </div>
     );
   }

@@ -13,9 +13,11 @@ const board = new Board({ x: 5, y: 5 });
 /**
  *
  */
-export default function Tutorial() {
+export default function Tutorial(props: { screenSize: string }) {
+  const { screenSize } = props;
   const [selectTile, setSelectTile] = useState<null | string>(null);
   const [selectedPiece, setselectedPiece] = useState<PieceName | null>(null);
+  const [pieceWidth, setPieceWidth] = useState(60);
   const [token, setToken] = useState(0);
 
   /**
@@ -26,6 +28,17 @@ export default function Tutorial() {
     const cleanUp = playSequence(selectedPiece, board, setSelectTile, setToken);
     return cleanUp;
   }, [selectedPiece]);
+
+  /**
+   *
+   */
+  useEffect(() => {
+    if (screenSize === "lg") {
+      setPieceWidth(60);
+    } else {
+      setPieceWidth(45);
+    }
+  }, [screenSize]);
 
   let tutContent: JSX.Element;
   // Make sure board is initialised with a state before rendering it
@@ -39,7 +52,6 @@ export default function Tutorial() {
           <div dangerouslySetInnerHTML={{ __html: pieceTutorials[selectedPiece].desc }}></div>
         </div>
         <div>
-          <br />
           <BoardView
             board={board}
             token={token}
@@ -60,6 +72,7 @@ export default function Tutorial() {
       <TutorialPieceSelect
         selectedPiece={selectedPiece}
         onPieceClick={(p) => setselectedPiece(p)}
+        pieceWidth={pieceWidth}
       />
       <hr />
       {tutContent}

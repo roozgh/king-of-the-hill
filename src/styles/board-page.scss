@@ -15,11 +15,7 @@
 .koth-page-header {
   width: 100%;
   height: 25px;
-  //display: flex;
-  //justify-content: flex-end;
-  //align-items: center;
   padding: 15px 0px;
-  //background-color: color.adjust($gray, $lightness: -12%);
   @media only screen and (max-width: 600px) {
     display: none;
   }
@@ -78,71 +74,5 @@
       align-content: space-between;
       gap: 20px;
     }
-  }
-}
-
-.koth-board-info {
-  display: grid;
-  grid-template-columns: 100%;
-  div {
-    width: 100%;
-  }
-  .koth-captured-pieces {
-    overflow-y: auto;
-  }
-  .koth-btn-controls {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-    button {
-      padding: 6px;
-    }
-  }
-}
-
-.koth-game-status {
-  padding: 10px 0px;
-  user-select: none;
-  background-color: color.adjust($gray, $lightness: -15%);
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.9em;
-  font-weight: bold;
-  text-align: center;
-}
-
-.koth-captured-pieces {
-  padding: 10px 0px;
-  border: dashed 2px color.adjust($gray, $lightness: -15%);
-  display: flex;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-}
-
-.attention {
-  animation: shake 0.5s;
-  animation-delay: 0s;
-  animation-iteration-count: 2;
-}
-
-@keyframes shake {
-  0% {
-    transform: translate(1px, 1px) rotate(5deg);
-  }
-  25% {
-    transform: translate(-1px, 0px) rotate(30deg) scale(1.2);
-    background-color: $white-prime;
-  }
-
-  50% {
-    transform: translate(-1px, 2px) rotate(-15deg) scale(0.8);
-    background-color: $white-prime;
-  }
-
-  75% {
-    transform: translate(3px, 1px) rotate(2deg) scale(1.2);
-  }
-
-  100% {
-    transform: translate(1px, -2px) rotate(-5deg);
   }
 }

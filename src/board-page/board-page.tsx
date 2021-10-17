@@ -91,7 +91,7 @@ export default function BoardPage() {
     // Don't go bigger than max width
     let newBoardWidth = Math.min(windowInnerWidth, boardMaxWidth);
     let screenSize: "sm" | "lg" = "sm";
-    let boardInfoSize = { w: newBoardWidth, h: 200 };
+    let boardInfoSize = { w: newBoardWidth, h: 120 };
 
     if (newBoardWidth > 660) {
       screenSize = "lg";
@@ -214,6 +214,7 @@ export default function BoardPage() {
             restart={onRestart}
             height={boardInfoSize.h}
             width={boardInfoSize.w}
+            screenSize={screenSize}
           />
         </div>
       </div>

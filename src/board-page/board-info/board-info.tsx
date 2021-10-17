@@ -38,7 +38,6 @@ export default function BoardInfo(props: BoardInfoProps) {
     let intervalId = 0;
 
     intervalId = window.setInterval(() => {
-      console.log(count);
       if (!btn) return;
       btn.classList.remove("attention");
       // JS trick to force browser to animate

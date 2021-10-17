@@ -189,7 +189,7 @@ export default function BoardPage() {
           href="https://github.com/roozgh/king-of-the-hill"
           style={{ float: "right", marginRight: "25px" }}
         >
-          <img src={githubSvg} alt="Restart Game" width="30" />
+          <img src={githubSvg} alt="See How It's Made" title="See How It's Made" width="30" />
         </a>
       </div>
       <div className="koth-page">

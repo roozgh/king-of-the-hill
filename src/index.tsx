@@ -1,4 +1,4 @@
-import "./styles/_index.scss";
+import "./scss/_index.scss";
 import React from "react";
 import ReactDOM from "react-dom";
 import BoardPage from "./board-page/board-page";

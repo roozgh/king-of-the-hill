@@ -1,5 +1,5 @@
 @use "sass:color";
-@use "./vars.scss" as *;
+@use "./_vars.scss" as *;
 
 body {
   background: $gray;

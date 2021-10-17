@@ -1,5 +1,5 @@
 @use "sass:color";
-@use "./vars.scss" as *;
+@use "./_vars.scss" as *;
 
 // Disables document body scroll when modal is open
 .ReactModal__Body--open {

@@ -44,7 +44,8 @@ export default function BoardInfo(props: BoardInfoProps) {
       void btn.offsetWidth;
       btn.classList.add("attention");
       count++;
-      if (count === 2) clearInterval(intervalId);
+      // Animate  btn 3 times then remove inetarvel
+      if (count === 3) clearInterval(intervalId);
     }, 3000);
 
     return () => clearInterval(intervalId);

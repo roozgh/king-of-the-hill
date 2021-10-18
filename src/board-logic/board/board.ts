@@ -14,7 +14,7 @@ export interface BoardConfig {
 const boardDimentions: { [k: string]: string[] } = {
   // X AXIS - Left To Right
   x: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"],
-  // Y AXIS - Top to Bottom
+  // Y AXIS - Bottom toTop
   y: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
 };
 
@@ -52,9 +52,9 @@ export class Board {
   }
 
   /**
-   * Move Piece. Check if game has winner.
-   * If game has winner, return winning player colour.
-   * If no winners, toggle player turn and return nothing.
+   * Moves Piece. Also checks if game has winner or ended in draw.
+   * It changes the game 'status' to player colour if winner is found e.g WHITE
+   * Or to 'DRAW' if game is drawn. Otherwise the status will remain 'ACTIVE'
    */
   move(from: string, to: string) {
     if (this.state.status !== "ACTIVE") throw Error("Game over. Cannot make moves");
@@ -72,6 +72,7 @@ export class Board {
 
     // Special Magician move
     if (movingPiece.name === "MAGICIAN" && capturedPiece) {
+      // Captured piece and moving piece Swap positions
       newState.set(to, movingPiece);
       newState.set(from, capturedPiece);
       this.state.addState(newState, [from, to]);

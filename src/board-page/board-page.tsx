@@ -4,8 +4,7 @@ import BoardView from "../components/board-view/board-view";
 import BoardInfo from "./board-info/board-info";
 import { getMoveCandidates } from "../board-logic/ai/move-finder";
 import { Board } from "../board-logic/board/board";
-import { JSONBoardState } from "../board-logic/board/board-state";
-import { EvaluatorPlugin } from "../board-logic/ai/score-evaluator";
+import { defaultBoardState, scoreEvalPlugins } from "./board-default-state";
 import MoveSound from "./assets/move.mp3";
 import githubSvg from "./assets/github.svg";
 
@@ -15,52 +14,6 @@ const boardMaxWidth = 850;
 
 const moveSound = new Audio(MoveSound);
 moveSound.volume = 0.3;
-
-const archerOnDarkDarkTiles: EvaluatorPlugin = (tile, piece) => {
-  if (piece.name === "ARCHER" && tile.colour === "DARK") return 10;
-  return 0;
-};
-
-const kingOutOfPosition: EvaluatorPlugin = (tile, piece) => {
-  if (piece.name === "KING") {
-    // If Red King is on First Rank
-    if (piece.colour === "BLACK" && tile.y === 6) {
-      return -25;
-    }
-    // If Blue King is on Last Rank
-    else if (piece.colour === "WHITE" && tile.y === 0) {
-      return -25;
-    }
-  }
-  return 0;
-};
-
-const scoreEvalPlugins = [archerOnDarkDarkTiles, kingOutOfPosition];
-
-const defaultBoardState: JSONBoardState = [
-  {
-    lastMove: null,
-    pieces: [
-      ["D1", "WHITE", "KING"],
-      ["A1", "WHITE", "CHARIOT"],
-      ["B1", "WHITE", "ARCHER"],
-      ["F1", "WHITE", "ARCHER"],
-      ["B2", "WHITE", "SPY"],
-      ["D2", "WHITE", "MAGICIAN"],
-      ["F2", "WHITE", "TOWER"],
-      ["G1", "WHITE", "CHARIOT"],
-
-      ["D7", "BLACK", "KING"],
-      ["A7", "BLACK", "CHARIOT"],
-      ["B7", "BLACK", "ARCHER"],
-      ["F7", "BLACK", "ARCHER"],
-      ["B6", "BLACK", "SPY"],
-      ["D6", "BLACK", "MAGICIAN"],
-      ["F6", "BLACK", "TOWER"],
-      ["G7", "BLACK", "CHARIOT"],
-    ],
-  },
-];
 
 const board = new Board({ x: 7, y: 7, hills: ["D4"] });
 board.state.setStateFromJSON(defaultBoardState);

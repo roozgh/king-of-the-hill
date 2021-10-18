@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, memo, useRef } from "react";
-import { useWindowEvent, delay, getWindowInnerWidth } from "../utils";
+import { useWindowEvent, delay, getWindowInnerWidth } from "../utils/utils";
 import BoardView from "../components/board-view/board-view";
 import BoardInfo from "./board-info/board-info";
 import { getMoveCandidates } from "../board-logic/ai/move-finder";

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Board } from "../../board-logic/board/board";
-import { Modal } from "../../components/modal";
+import { Modal } from "../../components/modal/modal";
 import { CapturedPieces } from "./captured-pieces";
 import { GameStatus } from "./game-status";
 import Tutorial from "../tutorial/tutorial";

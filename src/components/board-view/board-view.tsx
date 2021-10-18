@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useReducer, useState, useMemo } from "react";
 import { Piece } from "../piece/piece";
-import { useWindowEvent } from "../../utils";
+import { useWindowEvent } from "../../utils/utils";
 import { Board } from "../../board-logic/board/board";
 import { boardViewInitialState } from "./state/board-view-state";
 import { boardViewReducer } from "./state/board-view-reducer";

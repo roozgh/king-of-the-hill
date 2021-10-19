@@ -1,4 +1,4 @@
-import { makePiece, PieceName, Colour } from "../piece";
+import { Colour } from "../piece";
 import { Tile } from "../tile";
 import { getPossibleMoves } from "../possible-moves";
 import { makeBoardTilesFromAxis } from "../tile-maker";

@@ -1,5 +1,4 @@
 import { Direction } from "./tile-maker";
-import { Piece } from "./piece";
 
 export type TileColour = "DARK" | "LIGHT";
 
@@ -8,7 +7,7 @@ export type TileConfig = {
   x: number;
   y: number;
   isHill: boolean;
-  xEdge: number; // A number between 0 & 1, indication how far the tile is away from the centre
+  xEdge: number; // Indication how far the tile is away from the centre
   yEdge: number;
   colour: TileColour;
 };
@@ -34,14 +33,9 @@ export class Tile {
     this.yEdge = yEdge;
   }
 
-  addPiece(piece: Piece) {}
-
-  removePiece() {}
-
-  getPossibleMoves() {
-    //
-  }
-
+  /**
+   *
+   */
   walk(direction: Direction) {
     return this.neighbours.get(direction);
   }

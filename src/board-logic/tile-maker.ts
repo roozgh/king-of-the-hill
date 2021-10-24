@@ -182,7 +182,7 @@ export function makeBoardTilesFromAxis({
 }
 
 /**
- * Whether Tile is Black or White
+ * Whether Tile is Dark or Light
  */
 function getTileColour(x: number, y: number): TileColour {
   if (y % 2 === 0) {

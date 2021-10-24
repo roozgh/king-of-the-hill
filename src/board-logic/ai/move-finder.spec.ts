@@ -13,6 +13,7 @@ describe("Move Finder", () => {
       },
     ];
 
+    // Set up a 4X4 board for testing
     const board = new Board({ x: 4, y: 4 });
     board.state.setStateFromJSON(state);
 

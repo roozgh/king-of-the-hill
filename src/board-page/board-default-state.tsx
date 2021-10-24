@@ -7,7 +7,7 @@ import { EvaluatorPlugin } from "../board-logic/ai/score-evaluator";
  * becuase they can attack the Hill Tile on 'D4'
  * whcih is also on a Dark Tile.
  */
-const archerOnDarkDarkTiles: EvaluatorPlugin = (tile, piece) => {
+const archerOnDarkTiles: EvaluatorPlugin = (tile, piece) => {
   if (piece.name === "ARCHER" && tile.colour === "DARK") return 5;
   return 0;
 };
@@ -17,11 +17,11 @@ const archerOnDarkDarkTiles: EvaluatorPlugin = (tile, piece) => {
  */
 const kingOutOfPosition: EvaluatorPlugin = (tile, piece) => {
   if (piece.name === "KING") {
-    // If Red King is on First Rank
+    // If Black King is on First Rank
     if (piece.colour === "BLACK" && tile.y === 6) {
       return -20;
     }
-    // If Blue King is on Last Rank
+    // If White King is on Last Rank
     else if (piece.colour === "WHITE" && tile.y === 0) {
       return -20;
     }
@@ -33,7 +33,7 @@ const kingOutOfPosition: EvaluatorPlugin = (tile, piece) => {
  * Plugins are functions that are passed to
  * board evaluator when evaluating positions.
  */
-export const scoreEvalPlugins = [archerOnDarkDarkTiles, kingOutOfPosition];
+export const scoreEvalPlugins = [archerOnDarkTiles, kingOutOfPosition];
 
 export const defaultBoardState: JSONBoardState = [
   {

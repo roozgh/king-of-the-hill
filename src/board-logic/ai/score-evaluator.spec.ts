@@ -13,6 +13,7 @@ describe("Score Evaluator", () => {
       },
     ];
 
+    // Set up a 7X7 board
     const board = new Board({ x: 7, y: 7 });
     board.state.setStateFromJSON(state);
 

@@ -14,7 +14,7 @@ interface ModalProp {
 }
 
 /**
- *
+ * A wrapper for 'react-modal' library.
  */
 export function Modal(props: ModalProp) {
   const { isOpen, title, onClose, onAfterOpen, children } = props;

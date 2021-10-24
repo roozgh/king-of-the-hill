@@ -19,6 +19,19 @@ type JSONBoardStateSingle = {
   lastMove: LastMove;
   pieces: JSONBoardStatePiece[];
 };
+
+/**
+ * Board's State in JSON form. e.g:
+ * [
+      {
+        lastMove: null,
+        pieces: [
+          ["A1", "WHITE", "KING"],
+          ["A2", "BLACK", "KING"],
+        ],
+      },
+    ] 
+ */
 export type JSONBoardState = JSONBoardStateSingle[];
 
 type Status = "ACTIVE" | "DRAW" | Colour;

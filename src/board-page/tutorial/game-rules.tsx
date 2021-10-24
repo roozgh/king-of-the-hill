@@ -18,7 +18,7 @@ export function GameRules(props: { totalTurns: number }) {
         </li>
       </ol>
       Each game lasts {props.totalTurns} turns. Like Chess, each piece has a unique set of moves.
-      Some pieces have special moves and properties. You can learn about piece movement by clickng
+      Some pieces have special moves and properties. You can learn about piece movement by clicking
       on piece icons above.
     </div>
   );

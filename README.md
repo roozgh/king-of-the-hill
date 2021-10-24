@@ -5,7 +5,7 @@ An original strategy board game similar to Chess. Created using React, Typescrip
 
 ## Code Explanation
 
-This project is divided into two parts. One is 'board-logic' which is pure Typescript and contains the board rules, state and AI. This part is independent of React and can coupled with any view engine. It can even be used on a server running NodeJs.
+This project is divided into two parts. One is 'board-logic' which is pure Typescript and contains the board rules, state and AI. This part is independent of React and can be coupled with any view engine. It can even be used on a server running NodeJs.
 
 The second part is 'board-views' which contains the view layer for the game. Board-views is written with modern React using React Hooks.
 

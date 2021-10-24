@@ -80,7 +80,7 @@ export const pieceTutorials: Record<PieceName, PieceTutorial> = {
     desc: `
       Magician can move any number of Tiles in any direction. 
       Magician cannot capture pieces, however it can swap position with 
-      firendly and enemy pieces in its <u title="Meaning not obstructed by another piece">line of sight</u>.
+      friendly and enemy pieces in its <u title="Meaning not obstructed by another piece">line of sight</u>.
       `,
     moves: [
       {

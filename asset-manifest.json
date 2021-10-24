@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/king-of-the-hill/static/css/main.31a19243.chunk.css",
-    "main.js": "/king-of-the-hill/static/js/main.384b4e50.chunk.js",
-    "main.js.map": "/king-of-the-hill/static/js/main.384b4e50.chunk.js.map",
+    "main.js": "/king-of-the-hill/static/js/main.b0feaaac.chunk.js",
+    "main.js.map": "/king-of-the-hill/static/js/main.b0feaaac.chunk.js.map",
     "runtime-main.js": "/king-of-the-hill/static/js/runtime-main.1a7183d9.js",
     "runtime-main.js.map": "/king-of-the-hill/static/js/runtime-main.1a7183d9.js.map",
     "static/js/2.7990a07c.chunk.js": "/king-of-the-hill/static/js/2.7990a07c.chunk.js",
@@ -21,6 +21,6 @@
     "static/js/runtime-main.1a7183d9.js",
     "static/js/2.7990a07c.chunk.js",
     "static/css/main.31a19243.chunk.css",
-    "static/js/main.384b4e50.chunk.js"
+    "static/js/main.b0feaaac.chunk.js"
   ]
 }
